@@ -151,8 +151,11 @@ let myFirebaseId = null;
 function joinFirebase(name) {
     if (!window.db || !window.firebaseReady) return;
     
-    myFirebaseId = 'p_' + Math.random().toString(36).substr(2, 9);
-    firebasePlayersRef = db.ref('jugadores');
+    var myName = getMyName();
+    if (!myName) return;
+    
+    myFirebaseId = myName.replace(/[^a-zA-Z0-9]/g, '') + '_' + Math.random().toString(36).substr(2, 4);
+    firebasePlayersRef = window.db.ref('jugadores');
     firebaseMyRef = firebasePlayersRef.child(myFirebaseId);
     
     var playerData = {
@@ -306,44 +309,59 @@ window.showPlayersList = function() {
     if (!modal || !list) return;
     
     var myName = getMyName();
-    
-    var html = '<li style="padding:10px;border-bottom:2px solid #2ecc71;">🟢 ' + myName + ' (tú)</li>' +
-              '<li style="padding:10px;color:#f39c12;">⏳ Conectando...</li>';
-    list.innerHTML = html;
-    modal.style.display = 'flex';
-    
-    // If already connected, just request players
-    if (ws && ws.readyState === WebSocket.OPEN) {
-        ws.send(JSON.stringify({ type: 'register', name: myName }));
-        setTimeout(function() { ws.send(JSON.stringify({ type: 'get-players' })); }, 300);
+    if (!myName || myName.length < 2) {
+        if (list) {
+            list.innerHTML = '<li style="padding:10px;color:#e74c3c;">⚠️ Escribe un nombre primero</li>';
+            modal.style.display = 'flex';
+        }
         return;
     }
     
-    // Try to connect
-    connectWebSocket().then(function(result) {
-        ws = result.ws;
-        isOnline = true;
-        
-        ws.send(JSON.stringify({ type: 'register', name: myName }));
-        setTimeout(function() { ws.send(JSON.stringify({ type: 'get-players' })); }, 500);
-        
-        ws.onmessage = function(e) {
-            try {
-                var msg = JSON.parse(e.data);
-                if (msg.type === 'registered') {
-                    myName = msg.name;
-                    sessionStorage.setItem('myName', myName);
+    var html = '<li style="padding:10px;border-bottom:2px solid #2ecc71;">🟢 ' + myName + ' (tú)</li>';
+    list.innerHTML = html;
+    modal.style.display = 'flex';
+    
+    // If Firebase is ready, show players from Firebase
+    if (window.db && window.firebaseReady) {
+        window.db.ref('jugadores').once('value', function(snapshot) {
+            var html = '<li style="padding:10px;border-bottom:2px solid #2ecc71;">🟢 ' + myName + ' (tú)</li>';
+            var now = Date.now();
+            var players = [];
+            
+            snapshot.forEach(function(child) {
+                var id = child.key;
+                var data = child.val();
+                if (id !== myFirebaseId) {
+                    var lastSeen = data.ultimo || 0;
+                    var diff = now - lastSeen;
+                    var isOnline = diff < 10000; // 10 segundos
+                    players.push({ id: id, nombre: data.nombre, online: isOnline, ultimo: lastSeen });
                 }
-                if (msg.type === 'players-list') {
-                    showPlayersInModal(msg.players || [], myName, msg.playing || []);
-                }
-            } catch(err) {}
-        };
-        
-    }).catch(function(e) {
-        list.innerHTML = '<li style="padding:10px;color:#e74c3c;">❌ Sin conexión</li>';
-    });
+            });
+            
+            // Ordenar: primero online, luego offline
+            players.sort(function(a, b) { return (b.online ? 1 : 0) - (a.online ? 1 : 0); });
+            
+            players.forEach(function(p) {
+                var status = p.online ? '🟢 En juego' : '🔴 Desconectado hace ' + formatTimeDiff(now - p.ultimo);
+                var color = p.online ? '#2ecc71' : '#e74c3c';
+                html += '<li style="padding:10px;border-bottom:1px solid #444;color:' + color + ';">' + status + ' - ' + p.nombre + '</li>';
+            });
+            
+            if (players.length === 0) {
+                html += '<li style="padding:10px;color:#888;">No hay otros jugadores</li>';
+            }
+            
+            list.innerHTML = html;
+        });
+    }
 };
+
+function formatTimeDiff(ms) {
+    if (ms < 60000) return Math.floor(ms / 1000) + 's';
+    if (ms < 3600000) return Math.floor(ms / 60000) + 'm';
+    return Math.floor(ms / 3600000) + 'h';
+}
 
 function saveUsername(name) {
     const cleanName = name.trim().replace(/[^a-zA-Z0-9_ñÑ]/g, '');
