@@ -344,6 +344,10 @@ window.showPlayersList = function() {
             
             console.log('🔥 Snapshot tiene elementos:', snapshot.numChildren());
             
+            if (snapshot.numChildren() === 0) {
+                html += '<li style="padding:10px;color:#f39c12;">⏳ Primero juega para ver otros jugadores</li>';
+            } else {
+            
             snapshot.forEach(function(child) {
                 var id = child.key;
                 var data = child.val();
@@ -373,7 +377,7 @@ window.showPlayersList = function() {
             players.sort(function(a, b) { return (b.online ? 1 : 0) - (a.online ? 1 : 0); });
             
             if (players.length === 0) {
-                html += '<li style="padding:10px;color:#888;">No hay otros jugadores conectados</li>';
+                html += '<li style="padding:10px;color:#888;">No hay otros jugadores</li>';
             } else {
                 players.forEach(function(p) {
                     var status = p.online ? '🟢 En juego' : '🔴 ' + formatTimeDiff(now - p.ultimo);
@@ -381,6 +385,7 @@ window.showPlayersList = function() {
                     html += '<li style="padding:10px;border-bottom:1px solid #444;color:' + color + ';">' + status + ' - ' + p.nombre + '</li>';
                 });
             }
+            }  // Cierre del else
             
             console.log('Jugadores encontrados en Firebase:', players.length);
             list.innerHTML = html;
