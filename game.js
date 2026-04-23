@@ -86,12 +86,8 @@ window.addEventListener('load', function() {
             if (counter) counter.innerHTML = '🟢 Conectado';
             console.log('WS conectado');
             
-            // Siempre pedir lista de jugadores
-            setTimeout(function() { 
-                if (ws && ws.readyState === WebSocket.OPEN) {
-                    ws.send(JSON.stringify({ type: 'get-players' })); 
-                }
-            }, 500);
+            // Pedir lista de jugadores
+            ws.send(JSON.stringify({ type: 'get-players' }));
             
             // Si hay nombre, registrarse
             if (myName && myName.length >= 2) {
@@ -350,12 +346,12 @@ window.showPlayersList = function() {
     list.innerHTML = '<li style="padding:10px;">⏳ Buscando jugadores...</li>';
     modal.style.display = 'flex';
     
-    // Pedir lista inmediatamente
+    // SIEMPRE pedir lista fresca al servidor
     if (ws && ws.readyState === WebSocket.OPEN) {
         ws.send(JSON.stringify({ type: 'get-players' }));
     }
     
-    // Mostrar datos (del cache o venirÃ¡n)
+    // Mostrar despues de 200ms (tiempo que tarde el servidor en responder)
     setTimeout(function() {
         var players = window.cachedPlayers || [];
         var html = '<li style="padding:10px;border-bottom:2px solid #2ecc71;">🟢 ' + myName + ' (tú)</li>';
@@ -365,10 +361,10 @@ window.showPlayersList = function() {
                 html += '<li style="padding:10px;border-bottom:1px solid #555;">🟢 ' + p + '</li>';
             });
         } else {
-            html += '<li style="padding:10px;color:#888;">No hay otros jugadores aún</li>';
+            html += '<li style="padding:10px;color:#888;">Cargando datos...</li>';
         }
         list.innerHTML = html;
-    }, 300);
+    }, 200);
 };
 
 function formatTimeDiff(ms) {
