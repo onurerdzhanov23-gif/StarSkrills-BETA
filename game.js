@@ -545,21 +545,7 @@ function connectToServer() {
                 if (msg.type === 'new') createOtherPlayer(msg.id, msg.color);
                 if (msg.type === 'left') removeOtherPlayer(msg.id);
                 if (msg.type === 'players-list') {
-                    const list = document.getElementById('players-list');
-                    const modal = document.getElementById('players-modal');
-                    const myName = getSessionUsername() || 'Tú';
-                    if (list && modal) {
-                        let html = `<li style="padding:10px;border-bottom:2px solid #3498db;">⭐ ${myName} (tú)</li>`;
-                        if (msg.players && msg.players.length > 0) {
-                            msg.players.forEach((p, i) => {
-                                html += `<li style="padding:10px;border-bottom:1px solid #555;">${p}</li>`;
-                            });
-                        } else {
-                            html += `<li style="padding:10px;color:#888;">Sin otros jugadores</li>`;
-                        }
-                        list.innerHTML = html;
-                        modal.style.display = 'flex';
-                    }
+                    // Ya NO mostrar automáticamente - solo al presionar botón
                 }
                 if (msg.type === 'registered') {
                     console.log('Registrado como:', msg.name);
@@ -582,6 +568,10 @@ function connectToServer() {
 
 // Funciones globales para botones - asegurados
 function runIntroSequence() {
+    // Ocultar tabla de jugadores por si acaso
+    var pm = document.getElementById('players-modal');
+    if (pm) pm.style.display = 'none';
+    
     // Buscar la función real
     try {
         if (typeof window.jugarStart === 'function') {
