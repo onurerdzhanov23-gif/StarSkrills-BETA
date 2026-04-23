@@ -97,9 +97,7 @@ window.addEventListener('load', function() {
                 try {
                     var msg = JSON.parse(e.data);
                     console.log('Mensaje:', msg.type);
-                    if (msg.type === 'players-list') {
-                        showPlayersInModal(msg.players || [], myName, msg.playing || []);
-                    }
+                    // Ya NO mostrar modal automáticamente - solo al presionar botón
                 } catch(err) {}
             };
             
