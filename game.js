@@ -349,22 +349,16 @@ window.showPlayersList = function() {
     
     var myName = getMyName();
     if (!myName || myName.length < 2) {
-        if (list) {
-            list.innerHTML = '<li style="padding:10px;color:#e74c3c;">⚠️ Escribe un nombre primero</li>';
-            modal.style.display = 'flex';
-        }
+        list.innerHTML = '<li style="padding:10px;color:#e74c3c;">⚠️ Escribe un nombre primero</li>';
+        modal.style.display = 'flex';
         return;
     }
     
-    // Mostrar modal primero
+    // Siempre usar Firebase
     list.innerHTML = '<li style="padding:10px;">⏳ Buscando jugadores...</li>';
     modal.style.display = 'flex';
     
-    // Intentar WebSocket primero
-    if (ws && ws.readyState === WebSocket.OPEN) {
-        ws.send(JSON.stringify({ type: 'get-players' }));
-    } else if (window.db) {
-        // Usar Firebase si no hay WS
+    if (window.db) {
         window.db.ref('jugadores').once('value', function(snapshot) {
             var html = '<li style="padding:10px;border-bottom:2px solid #2ecc71;">🟢 ' + myName + ' (tú)</li>';
             var now = Date.now();
@@ -376,7 +370,7 @@ window.showPlayersList = function() {
                 if (pName === myName || !pName) return;
                 
                 var diff = now - (data.ultimo || 0);
-                var online = diff < 10000;
+                var online = diff < 15000;
                 var status = online ? '🟢' : '🔴';
                 html += '<li style="padding:10px;border-bottom:1px solid #555;">' + status + ' ' + pName + '</li>';
                 count++;
@@ -388,7 +382,7 @@ window.showPlayersList = function() {
             list.innerHTML = html;
         });
     } else {
-        list.innerHTML = '<li style="padding:10px;color:#e74c3c;">🔴 Sin conexión</li>';
+        list.innerHTML = '<li style="padding:10px;color:#e74c3c;">❌ Firebase no disponible</li>';
     }
 };
 
