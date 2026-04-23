@@ -29,10 +29,16 @@
         messagingSenderId: "512948647518",
         appId: "1:512948647518:web:c64a61040a8661732d66cf"
       };
-      firebase.initializeApp(firebaseConfig);
-      const db = firebase.database();
-      window.firebaseReady = true;
-      console.log('🔥 Firebase cargado');
+      
+      // Initialize Firebase
+      try {
+        firebase.initializeApp(firebaseConfig);
+        window.db = firebase.database();
+        window.firebaseReady = true;
+        console.log('🔥 Firebase CARGADO correctamente');
+      } catch(e) {
+        console.error('🔥 Firebase ERROR:', e);
+      }
     </script>
     <script src="game.js"></script>
 <style>

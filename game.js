@@ -321,29 +321,38 @@ window.showPlayersList = function() {
     list.innerHTML = html;
     modal.style.display = 'flex';
     
-    // If Firebase is ready, show players from Firebase
+    // If Firebase is ready, show all players from Firebase
     if (window.db && window.firebaseReady) {
-        var myCleanName = myName.replace(/[^a-zA-Z0-9]/g, '');
-        
         window.db.ref('jugadores').once('value', function(snapshot) {
             var html = '<li style="padding:10px;border-bottom:2px solid #2ecc71;">🟢 ' + myName + ' (tú)</li>';
             var now = Date.now();
             var players = [];
+            var foundSelf = false;
             
             snapshot.forEach(function(child) {
                 var id = child.key;
                 var data = child.val();
                 var playerName = data.nombre || '';
-                var cleanPlayerName = playerName.replace(/[^a-zA-Z0-9]/g, '');
                 
-                // Skip self (by name match)
-                if (cleanPlayerName === myCleanName) return;
+                // Check if it's self by name
+                if (playerName === myName) {
+                    foundSelf = true;
+                    return;
+                }
+                
+                // Only show players with names
+                if (!playerName || playerName.length < 1) return;
                 
                 var lastSeen = data.ultimo || 0;
                 var diff = now - lastSeen;
                 var isOnline = diff < 10000; // 10 segundos
                 players.push({ id: id, nombre: playerName, online: isOnline, ultimo: lastSeen });
             });
+            
+            // Update my status if found
+            if (foundSelf) {
+                html = '<li style="padding:10px;border-bottom:2px solid #2ecc71;">🟢 ' + myName + ' (tú)</li>';
+            }
             
             // Ordenar: primero online, luego offline
             players.sort(function(a, b) { return (b.online ? 1 : 0) - (a.online ? 1 : 0); });
@@ -358,8 +367,14 @@ window.showPlayersList = function() {
                 });
             }
             
+            console.log('Jugadores encontrados en Firebase:', players.length);
             list.innerHTML = html;
+        }).catch(function(err) {
+            console.error('Firebase error:', err);
+            list.innerHTML = '<li style="padding:10px;color:#e74c3c;">❌ Error: ' + err.message + '</li>';
         });
+    } else {
+        list.innerHTML = '<li style="padding:10px;color:#e74c3c;">⚠️ Firebase no está listo</li>';
     }
 };
 
