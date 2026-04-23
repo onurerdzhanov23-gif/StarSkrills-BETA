@@ -147,19 +147,19 @@ let firebaseMyRef = null;
 let firebasePlayersRef = null;
 let firebaseReady = false;
 let myFirebaseId = null;
+let firebaseOtherPlayers = new Map();
+const firebasePlayerMeshes = new Map();
 
 function joinFirebase(name) {
     if (!window.db || !window.firebaseReady) return;
+    if (!name || name.length < 2) return;
     
-    var myName = getMyName();
-    if (!myName) return;
-    
-    myFirebaseId = myName.replace(/[^a-zA-Z0-9]/g, '') + '_' + Math.random().toString(36).substr(2, 4);
+    myFirebaseId = name + '_' + Math.random().toString(36).substr(2, 4);
     firebasePlayersRef = window.db.ref('jugadores');
     firebaseMyRef = firebasePlayersRef.child(myFirebaseId);
     
     var playerData = {
-        nombre: name || sessionStorage.getItem('myName') || 'Jugador',
+        nombre: name,
         x: playerGroup ? playerGroup.position.x : 0,
         z: playerGroup ? playerGroup.position.z : 0,
         angulo: playerGroup ? playerGroup.rotation.y : 0,
@@ -175,32 +175,32 @@ function joinFirebase(name) {
     // Escuchar otros jugadores
     firebasePlayersRef.on('child_added', function(snapshot) {
         var id = snapshot.key;
-        if (id !== myFirebaseId) {
+        if (id !== myFirebaseId && !firebaseOtherPlayers.has(id)) {
             var data = snapshot.val();
             data.id = id;
-            otherPlayers.set(id, data);
+            firebaseOtherPlayers.set(id, data);
             createPlayerMesh(id, data);
         }
     });
     
     firebasePlayersRef.on('child_changed', function(snapshot) {
         var id = snapshot.key;
-        if (otherPlayers.has(id)) {
+        if (firebaseOtherPlayers.has(id)) {
             var data = snapshot.val();
-            var player = otherPlayers.get(id);
+            var player = firebaseOtherPlayers.get(id);
             player.x = data.x;
             player.z = data.z;
             player.angulo = data.angulo;
             player.color = data.color;
-            otherPlayers.set(id, player);
+            firebaseOtherPlayers.set(id, player);
         }
     });
     
     firebasePlayersRef.on('child_removed', function(snapshot) {
         var id = snapshot.key;
-        if (otherPlayers.has(id)) {
+        if (firebaseOtherPlayers.has(id)) {
             removePlayerMesh(id);
-            otherPlayers.delete(id);
+            firebaseOtherPlayers.delete(id);
         }
     });
     
@@ -217,8 +217,6 @@ function updateMyFirebasePosition() {
         ultimo: Date.now()
     });
 }
-
-const firebasePlayerMeshes = new Map();
 
 function createPlayerMesh(id, data) {
     if (firebasePlayerMeshes.has(id)) return;
@@ -262,7 +260,7 @@ function removePlayerMesh(id) {
 
 function updateFirebasePlayers() {
     firebasePlayerMeshes.forEach(function(g, id) {
-        var p = otherPlayers.get(id);
+        var p = firebaseOtherPlayers.get(id);
         if (p) {
             g.position.x = p.x || 0;
             g.position.z = p.z || 0;
@@ -586,7 +584,6 @@ function connectToServer() {
 function runIntroSequence() {
     // Buscar la función real
     try {
-        // Intentar ejecutar la función existente
         if (typeof window.jugarStart === 'function') {
             window.jugarStart();
         } else if (document.getElementById('start-btn')) {
@@ -595,19 +592,15 @@ function runIntroSequence() {
     } catch(e) {
         console.log('runIntroSequence error:', e);
     }
-    // También conectar al servidor
-    connectToServer();
-    // Avisar que starts a jugar
-    setTimeout(function() {
-        var myName = sessionStorage.getItem('myName') || sessionStorage.getItem('savedName') || '';
-        if (ws && ws.readyState === WebSocket.OPEN && myName) {
-            ws.send(JSON.stringify({ type: 'register', name: myName }));
-            setTimeout(function() {
-                ws.send(JSON.stringify({ type: 'game-start' }));
-                window.amIPlaying = true;
-            }, 1000);
+    
+    // 🔥 FIREBASE: Unirse cuando juega
+    if (window.firebaseReady && window.db) {
+        var myName = getMyName();
+        if (myName && myName.length >= 2) {
+            joinFirebase(myName);
+            console.log('🔥 Conectando a Firebase como:', myName);
         }
-    }, 2000);
+    }
 }
 
 window.sendGameEnd = function() {
@@ -3865,12 +3858,6 @@ function createDetailedBrawler(colorHex) {
                         introSequenceActive = false; // Tarea: Desbloquear controles
                         isPlaying = true;
                         gameStartTime = Date.now();
-                        
-                        // 🔥 FIREBASE: Unirse al juego
-                        if (window.firebaseReady) {
-                            var myName = sessionStorage.getItem('myName') || 'Jugador';
-                            joinFirebase(myName);
-                        }
                         
                         // Ocultar canvas de estrellas cuando empieza el juego
                         const menuBgCanvas = document.getElementById('menu-bg-canvas');
