@@ -338,6 +338,10 @@ window.showPlayersList = function() {
     list.innerHTML = html;
     modal.style.display = 'flex';
     
+    console.log('🔥 db exists:', !!window.db);
+    console.log('🔥 firebaseReady:', window.firebaseReady);
+    console.log('🔥 myFirebaseId:', myFirebaseId);
+    
     // If Firebase is ready, show all players from Firebase
     if (window.db && window.firebaseReady) {
         console.log('🔥 Leyendo jugadores de Firebase...');
@@ -392,14 +396,49 @@ window.showPlayersList = function() {
             }
             }  // Cierre del else
             
-            console.log('Jugadores encontrados en Firebase:', players.length);
+            console.log('🔥 Jugadores encontrados en Firebase:', players.length);
             list.innerHTML = html;
         }).catch(function(err) {
             console.error('Firebase error:', err);
             list.innerHTML = '<li style="padding:10px;color:#e74c3c;">❌ Error: ' + err.message + '</li>';
         });
     } else {
-        list.innerHTML = '<li style="padding:10px;color:#e74c3c;">⚠️ Firebase no está listo</li>';
+        // Still try to show players even if firebaseReady is not set
+        console.log('🔥 Intentando mostrar jugadores...');
+        window.db.ref('jugadores').once('value', function(snapshot) {
+            var html = '<li style="padding:10px;border-bottom:2px solid #2ecc71;">🟢 ' + myName + ' (tú)</li>';
+            var now = Date.now();
+            var players = [];
+            
+            console.log('🔥 Players in DB:', snapshot.numChildren());
+            
+            snapshot.forEach(function(child) {
+                var id = child.key;
+                var data = child.val();
+                var playerName = data.nombre || '';
+                
+                if (!playerName || playerName.length < 1) return;
+                
+                var lastSeen = data.ultimo || 0;
+                var diff = now - lastSeen;
+                var isOnline = diff < 10000;
+                players.push({ nombre: playerName, online: isOnline, ultimo: lastSeen });
+            });
+            
+            if (players.length === 0) {
+                html += '<li style="padding:10px;color:#f39c12;">⏳ No hay jugadores</li>';
+            } else {
+                players.forEach(function(p) {
+                    var status = p.online ? '🟢 En juego' : '🔴 ' + formatTimeDiff(now - p.ultimo);
+                    var color = p.online ? '#2ecc71' : '#e74c3c';
+                    html += '<li style="padding:10px;border-bottom:1px solid #444;color:' + color + ';">' + status + ' - ' + p.nombre + '</li>';
+                });
+            }
+            
+            list.innerHTML = html;
+        }).catch(function(err) {
+            console.error('Firebase error:', err);
+        });
     }
 };
 
