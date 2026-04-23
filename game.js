@@ -359,20 +359,26 @@ window.showPlayersList = function() {
         ws.send(JSON.stringify({ type: 'get-players' }));
     }
     
-    // Mostrar despues de 200ms (tiempo que tarde el servidor en responder)
-    setTimeout(function() {
+    // Ahora waiting hasta que llegue la respuesta
+    var checkCount = 0;
+    var checkInterval = setInterval(function() {
         var players = window.cachedPlayers || [];
         var html = '<li style="padding:10px;border-bottom:2px solid #2ecc71;">🟢 ' + myName + ' (tú)</li>';
         
         if (players.length > 0) {
             players.forEach(function(p) {
+                // Mostrar en verde (conectado) o rojo (desconectado)
                 html += '<li style="padding:10px;border-bottom:1px solid #555;">🟢 ' + p + '</li>';
             });
-        } else {
-            html += '<li style="padding:10px;color:#888;">Cargando datos...</li>';
+            clearInterval(checkInterval);
+        } else if (checkCount > 5) {
+            clearInterval(checkInterval);
+            html += '<li style="padding:10px;color:#e74c3c;">🔴 Servidor sin respuesta</li>';
         }
+        
         list.innerHTML = html;
-    }, 200);
+        checkCount++;
+    }, 100);
 };
 
 function formatTimeDiff(ms) {
