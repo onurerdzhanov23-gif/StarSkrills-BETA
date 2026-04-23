@@ -2772,7 +2772,7 @@
             </div>
             <div style="width:50px;height:50px;background:rgba(255,255,255,0.2);border:3px solid rgba(255,255,255,0.4);border-radius:12px;"></div>
         </div>
-        <button id="start-btn" onclick="try{runIntroSequence();}catch(e){}" style="padding:30px 100px;font-size:40px;font-family:'Poppins',sans-serif;font-weight:800;background:linear-gradient(180deg,#2ecc71,#27ae60);border:6px solid #fff;border-radius:30px;color:#fff;cursor:pointer;margin:20px;box-shadow:0 10px 0 #1e8449;text-transform:uppercase;letter-spacing:2px;">JUGAR</button>
+        <button id="start-btn" onclick="try{var pm=document.getElementById('players-modal');if(pm)pm.style.display='none';runIntroSequence();}catch(e){}" style="padding:30px 100px;font-size:40px;font-family:'Poppins',sans-serif;font-weight:800;background:linear-gradient(180deg,#2ecc71,#27ae60);border:6px solid #fff;border-radius:30px;color:#fff;cursor:pointer;margin:20px;box-shadow:0 10px 0 #1e8449;text-transform:uppercase;letter-spacing:2px;">JUGAR</button>
         <p style="color:rgba(255,255,255,0.5);font-size:18px;margin-top:25px;font-family:'Poppins',sans-serif;">Toca al personaje para cambiarlo</p>
     </div>
 
