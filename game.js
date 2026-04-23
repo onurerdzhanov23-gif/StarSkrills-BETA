@@ -124,10 +124,10 @@ window.addEventListener('load', function() {
 setInterval(function() {
     try {
         document.querySelectorAll('div').forEach(function(d) {
-            if (d.innerText && d.innerText.includes('image.png') && d.innerText.length < 50) d.remove();
+            if (d.innerText && d.innerText.length > 5 && d.innerText.length < 30 && d.innerText.includes('.png')) d.remove();
         });
     } catch(e) {}
-}); // End error overlay removal
+});
 
 document.addEventListener('DOMContentLoaded', function() {
 console.log('game.js starting, THREE:', typeof THREE);
