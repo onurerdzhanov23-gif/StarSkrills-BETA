@@ -660,15 +660,21 @@ function runIntroSequence() {
     }
     
     // 🔥 FIREBASE: Unirse cuando juega
+    var myName = getMyName();
+    console.log('🔥 runIntro - getMyName:', myName);
+    console.log('🔥 firebaseReady:', window.firebaseReady);
+    console.log('🔥 db:', !!window.db);
+    
     if (window.firebaseReady && window.db) {
-        var myName = getMyName();
-        console.log('🔥 getMyName retorna:', myName);
         if (myName && myName.length >= 2) {
+            console.log('🔥 Llamando joinFirebase...');
             joinFirebase(myName);
             console.log('🔥 Conectando a Firebase como:', myName);
         } else {
             console.log('🔥 Nombre muy corto o vacío');
         }
+    } else {
+        console.log('🔥 Firebase NO listo aún');
     }
 }
 
