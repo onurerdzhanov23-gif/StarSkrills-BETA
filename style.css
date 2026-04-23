@@ -1,0 +1,71 @@
+body {
+    margin: 0;
+    overflow: hidden;
+    /* Prevent scrollbars */
+    background-color: #000;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    user-select: none;
+}
+
+#ui-container {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    color: white;
+    z-index: 10;
+    pointer-events: none;
+    /* Let clicks pass through to canvas */
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+h1 {
+    margin: 0 0 10px 0;
+    font-size: 2rem;
+    color: #ffcc00;
+    /* Brawl Stars style yellow */
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+p {
+    margin: 0;
+    font-size: 1.2rem;
+    color: #fff;
+}
+
+.menu-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+}
+
+.start-btn {
+    padding: 15px 50px;
+    font-size: 2rem;
+    font-weight: bold;
+    color: #000;
+    background-color: #ffcc00;
+    border: 4px solid #fff;
+    border-radius: 12px;
+    cursor: pointer;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    transition: transform 0.1s, background-color 0.2s;
+    text-transform: uppercase;
+}
+
+.start-btn:hover {
+    background-color: #ffe680;
+    transform: scale(1.05);
+}
+
+.start-btn:active {
+    transform: scale(0.95);
+}

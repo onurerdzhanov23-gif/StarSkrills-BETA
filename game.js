@@ -13,6 +13,7 @@ function getMyName() {
     }
     return name;
 }
+window.getMyName = getMyName;
 
 // Dummy sendToServer to avoid errors - Firebase handles multiplayer now
 function sendToServer(data) {
