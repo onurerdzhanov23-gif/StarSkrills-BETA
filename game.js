@@ -97,7 +97,22 @@ window.addEventListener('load', function() {
                     var msg = JSON.parse(e.data);
                     console.log('Mensaje:', msg.type);
                     if (msg.type === 'players-list') {
-                        // NO mostrar - solo al presionar botón 👥
+                        // Mostrar lista cuando llegue del WebSocket
+                        var list = document.getElementById('players-list');
+                        var modal = document.getElementById('players-modal');
+                        var myN = getMyName() || 'Tú';
+                        if (list && modal) {
+                            var html = '<li style="padding:10px;border-bottom:2px solid #2ecc71;">🟢 ' + myN + ' (tú)</li>';
+                            if (msg.players && msg.players.length > 0) {
+                                msg.players.forEach(function(p) {
+                                    html += '<li style="padding:10px;border-bottom:1px solid #555;">🟢 ' + p + '</li>';
+                                });
+                            } else {
+                                html += '<li style="padding:10px;color:#888;">No hay otros jugadores</li>';
+                            }
+                            list.innerHTML = html;
+                            modal.style.display = 'flex';
+                        }
                     }
                 } catch(err) {}
             };
@@ -345,12 +360,35 @@ window.showPlayersList = function() {
     list.innerHTML = '<li style="padding:10px;">⏳ Buscando jugadores...</li>';
     modal.style.display = 'flex';
     
-    // Pedir lista al WebSocket
+    // Intentar WebSocket primero
     if (ws && ws.readyState === WebSocket.OPEN) {
         ws.send(JSON.stringify({ type: 'get-players' }));
+    } else if (window.db) {
+        // Usar Firebase si no hay WS
+        window.db.ref('jugadores').once('value', function(snapshot) {
+            var html = '<li style="padding:10px;border-bottom:2px solid #2ecc71;">🟢 ' + myName + ' (tú)</li>';
+            var now = Date.now();
+            var count = 0;
+            
+            snapshot.forEach(function(child) {
+                var data = child.val();
+                var pName = data.nombre || '';
+                if (pName === myName || !pName) return;
+                
+                var diff = now - (data.ultimo || 0);
+                var online = diff < 10000;
+                var status = online ? '🟢' : '🔴';
+                html += '<li style="padding:10px;border-bottom:1px solid #555;">' + status + ' ' + pName + '</li>';
+                count++;
+            });
+            
+            if (count === 0) {
+                html += '<li style="padding:10px;color:#888;">No hay otros jugadores</li>';
+            }
+            list.innerHTML = html;
+        });
     } else {
-        // Si no hay WS, mostrar offline
-        list.innerHTML = '<li style="padding:10px;color:#e74c3c;">🔴 Sin conexión al servidor</li>';
+        list.innerHTML = '<li style="padding:10px;color:#e74c3c;">🔴 Sin conexión</li>';
     }
 };
 
