@@ -86,11 +86,16 @@ window.addEventListener('load', function() {
             if (counter) counter.innerHTML = '🟢 Conectado';
             console.log('WS conectado');
             
+            // Siempre pedir lista de jugadores
+            setTimeout(function() { 
+                if (ws && ws.readyState === WebSocket.OPEN) {
+                    ws.send(JSON.stringify({ type: 'get-players' })); 
+                }
+            }, 500);
+            
+            // Si hay nombre, registrarse
             if (myName && myName.length >= 2) {
                 ws.send(JSON.stringify({ type: 'register', name: myName }));
-                setTimeout(function() { 
-                    ws.send(JSON.stringify({ type: 'get-players' })); 
-                }, 500);
             }
             
             ws.onmessage = function(e) {
