@@ -323,6 +323,8 @@ window.showPlayersList = function() {
     
     // If Firebase is ready, show players from Firebase
     if (window.db && window.firebaseReady) {
+        var myCleanName = myName.replace(/[^a-zA-Z0-9]/g, '');
+        
         window.db.ref('jugadores').once('value', function(snapshot) {
             var html = '<li style="padding:10px;border-bottom:2px solid #2ecc71;">🟢 ' + myName + ' (tú)</li>';
             var now = Date.now();
@@ -331,25 +333,29 @@ window.showPlayersList = function() {
             snapshot.forEach(function(child) {
                 var id = child.key;
                 var data = child.val();
-                if (id !== myFirebaseId) {
-                    var lastSeen = data.ultimo || 0;
-                    var diff = now - lastSeen;
-                    var isOnline = diff < 10000; // 10 segundos
-                    players.push({ id: id, nombre: data.nombre, online: isOnline, ultimo: lastSeen });
-                }
+                var playerName = data.nombre || '';
+                var cleanPlayerName = playerName.replace(/[^a-zA-Z0-9]/g, '');
+                
+                // Skip self (by name match)
+                if (cleanPlayerName === myCleanName) return;
+                
+                var lastSeen = data.ultimo || 0;
+                var diff = now - lastSeen;
+                var isOnline = diff < 10000; // 10 segundos
+                players.push({ id: id, nombre: playerName, online: isOnline, ultimo: lastSeen });
             });
             
             // Ordenar: primero online, luego offline
             players.sort(function(a, b) { return (b.online ? 1 : 0) - (a.online ? 1 : 0); });
             
-            players.forEach(function(p) {
-                var status = p.online ? '🟢 En juego' : '🔴 Desconectado hace ' + formatTimeDiff(now - p.ultimo);
-                var color = p.online ? '#2ecc71' : '#e74c3c';
-                html += '<li style="padding:10px;border-bottom:1px solid #444;color:' + color + ';">' + status + ' - ' + p.nombre + '</li>';
-            });
-            
             if (players.length === 0) {
-                html += '<li style="padding:10px;color:#888;">No hay otros jugadores</li>';
+                html += '<li style="padding:10px;color:#888;">No hay otros jugadores conectados</li>';
+            } else {
+                players.forEach(function(p) {
+                    var status = p.online ? '🟢 En juego' : '🔴 ' + formatTimeDiff(now - p.ultimo);
+                    var color = p.online ? '#2ecc71' : '#e74c3c';
+                    html += '<li style="padding:10px;border-bottom:1px solid #444;color:' + color + ';">' + status + ' - ' + p.nombre + '</li>';
+                });
             }
             
             list.innerHTML = html;
