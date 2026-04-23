@@ -13,7 +13,6 @@ function getMyName() {
     }
     return name;
 }
-window.getMyName = getMyName;
 
 // Dummy sendToServer to avoid errors - Firebase handles multiplayer now
 function sendToServer(data) {
@@ -98,7 +97,7 @@ window.addEventListener('load', function() {
                     var msg = JSON.parse(e.data);
                     console.log('Mensaje:', msg.type);
                     if (msg.type === 'players-list') {
-                        showPlayersInModal(msg.players || [], myName, msg.playing || []);
+                        // NO mostrar - solo al presionar botón 👥
                     }
                 } catch(err) {}
             };
@@ -389,34 +388,7 @@ window.showPlayersList = function() {
         });
     } else {
         list.innerHTML = '<li style="padding:10px;color:#e74c3c;">⚠️ Firebase no disponible</li>';
-    }
-};
-            
-            // Update my status if found
-            if (foundSelf) {
-                html = '<li style="padding:10px;border-bottom:2px solid #2ecc71;">🟢 ' + myName + ' (tú)</li>';
-            }
-            
-            // Ordenar: primero online, luego offline
-            players.sort(function(a, b) { return (b.online ? 1 : 0) - (a.online ? 1 : 0); });
-            
-            if (players.length === 0) {
-                html += '<li style="padding:10px;color:#888;">No hay otros jugadores</li>';
-            } else {
-                players.forEach(function(p) {
-                    var status = p.online ? '🟢 En juego' : '🔴 ' + formatTimeDiff(now - p.ultimo);
-                    var color = p.online ? '#2ecc71' : '#e74c3c';
-                    html += '<li style="padding:10px;border-bottom:1px solid #444;color:' + color + ';">' + status + ' - ' + p.nombre + '</li>';
-                });
-            }
-            
-            console.log('🔥 Jugadores encontrados en Firebase:', players.length);
-            list.innerHTML = html;
-        }).catch(function(err) {
-            console.error('Firebase error:', err);
-            list.innerHTML = '<li style="padding:10px;color:#e74c3c;">❌ Error: ' + err.message + '</li>';
-        });
-    }
+}
 };
 
 function formatTimeDiff(ms) {
@@ -428,6 +400,20 @@ function formatTimeDiff(ms) {
     if (horas < 1) return '-1h';
     if (dias < 1) return horas + 'h';
     return dias + 'd';
+}
+
+function saveUsername(name) {
+    const cleanName = name.trim().replace(/[^a-zA-Z0-9_ñÑ]/g, '');
+    if (cleanName.length < 2) return null;
+    if (!registeredPlayers.includes(cleanName)) {
+        registeredPlayers.push(cleanName);
+        localStorage.setItem('registeredPlayers', JSON.stringify(registeredPlayers));
+    }
+    const sessionId = 'user_' + Date.now();
+    sessionStorage.setItem('myName', cleanName);
+    sessionStorage.setItem('sessionId', sessionId);
+    localStorage.setItem('session_' + sessionId, cleanName);
+    return cleanName;
 }
 
 function getSavedUsername() {
@@ -574,7 +560,7 @@ function connectToServer() {
                 if (msg.type === 'new') createOtherPlayer(msg.id, msg.color);
                 if (msg.type === 'left') removeOtherPlayer(msg.id);
                 if (msg.type === 'players-list') {
-                    // No mostrar automáticamente - solo al presionar botón 👥
+                    // NO mostrar automáticamente
                 }
                 if (msg.type === 'registered') {
                     console.log('Registrado como:', msg.name);
@@ -597,14 +583,12 @@ function connectToServer() {
 
 // Funciones globales para botones - asegurados
 function runIntroSequence() {
-    // Cerrar modal de jugadores por si acaso
-    var pm = document.getElementById('players-modal');
-    if (pm) pm.style.display = 'none';
-    
-    // Llamar a jugarStart directamente
+    // Buscar la función real
     try {
         if (typeof window.jugarStart === 'function') {
             window.jugarStart();
+        } else if (document.getElementById('start-btn')) {
+            document.getElementById('start-btn').click();
         }
     } catch(e) {
         console.log('runIntroSequence error:', e);
