@@ -358,9 +358,14 @@ window.showPlayersList = function() {
 };
 
 function formatTimeDiff(ms) {
-    if (ms < 60000) return Math.floor(ms / 1000) + 's';
-    if (ms < 3600000) return Math.floor(ms / 60000) + 'm';
-    return Math.floor(ms / 3600000) + 'h';
+    var segundos = Math.floor(ms / 1000);
+    var minutos = Math.floor(ms / 60000);
+    var horas = Math.floor(ms / 3600000);
+    var dias = Math.floor(ms / 86400000);
+    
+    if (horas < 1) return '-1h';
+    if (dias < 1) return horas + 'h';
+    return dias + 'd';
 }
 
 function saveUsername(name) {
