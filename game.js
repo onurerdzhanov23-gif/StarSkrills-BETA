@@ -151,8 +151,16 @@ let firebaseOtherPlayers = new Map();
 const firebasePlayerMeshes = new Map();
 
 function joinFirebase(name) {
-    if (!window.db || !window.firebaseReady) return;
-    if (!name || name.length < 2) return;
+    if (!window.db || !window.firebaseReady) {
+        console.log('🔥 Firebase no listo - db:', !!window.db, 'ready:', window.firebaseReady);
+        return;
+    }
+    if (!name || name.length < 2) {
+        console.log('🔥 Nombre inválido:', name);
+        return;
+    }
+    
+    console.log('🔥 Guardando jugador:', name);
     
     myFirebaseId = name + '_' + Math.random().toString(36).substr(2, 4);
     firebasePlayersRef = window.db.ref('jugadores');
@@ -167,7 +175,13 @@ function joinFirebase(name) {
         ultimo: Date.now()
     };
     
-    firebaseMyRef.set(playerData);
+    console.log('🔥 playerData:', playerData);
+    
+    firebaseMyRef.set(playerData).then(function() {
+        console.log('🔥 Jugador Guardado en Firebase!');
+    }).catch(function(err) {
+        console.error('🔥 Error al guardar:', err);
+    });
     
     // Borrar al desconectar
     firebaseMyRef.onDisconnect().remove();
@@ -596,9 +610,12 @@ function runIntroSequence() {
     // 🔥 FIREBASE: Unirse cuando juega
     if (window.firebaseReady && window.db) {
         var myName = getMyName();
+        console.log('🔥 getMyName retorna:', myName);
         if (myName && myName.length >= 2) {
             joinFirebase(myName);
             console.log('🔥 Conectando a Firebase como:', myName);
+        } else {
+            console.log('🔥 Nombre muy corto o vacío');
         }
     }
 }
