@@ -335,11 +335,14 @@ window.showPlayersList = function() {
     
     // If Firebase is ready, show all players from Firebase
     if (window.db && window.firebaseReady) {
+        console.log('🔥 Leyendo jugadores de Firebase...');
         window.db.ref('jugadores').once('value', function(snapshot) {
             var html = '<li style="padding:10px;border-bottom:2px solid #2ecc71;">🟢 ' + myName + ' (tú)</li>';
             var now = Date.now();
             var players = [];
             var foundSelf = false;
+            
+            console.log('🔥 Snapshot tiene elementos:', snapshot.numChildren());
             
             snapshot.forEach(function(child) {
                 var id = child.key;
