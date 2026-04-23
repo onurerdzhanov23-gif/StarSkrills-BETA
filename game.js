@@ -430,20 +430,6 @@ function formatTimeDiff(ms) {
     return dias + 'd';
 }
 
-function saveUsername(name) {
-    const cleanName = name.trim().replace(/[^a-zA-Z0-9_ñÑ]/g, '');
-    if (cleanName.length < 2) return null;
-    if (!registeredPlayers.includes(cleanName)) {
-        registeredPlayers.push(cleanName);
-        localStorage.setItem('registeredPlayers', JSON.stringify(registeredPlayers));
-    }
-    const sessionId = 'user_' + Date.now();
-    sessionStorage.setItem('myName', cleanName);
-    sessionStorage.setItem('sessionId', sessionId);
-    localStorage.setItem('session_' + sessionId, cleanName);
-    return cleanName;
-}
-
 function getSavedUsername() {
     return sessionStorage.getItem('myName') || '';
 }
@@ -615,12 +601,10 @@ function runIntroSequence() {
     var pm = document.getElementById('players-modal');
     if (pm) pm.style.display = 'none';
     
-    // Buscar la función real
+    // Llamar a jugarStart directamente
     try {
         if (typeof window.jugarStart === 'function') {
             window.jugarStart();
-        } else if (document.getElementById('start-btn')) {
-            document.getElementById('start-btn').click();
         }
     } catch(e) {
         console.log('runIntroSequence error:', e);
