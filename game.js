@@ -99,8 +99,16 @@ window.addEventListener('load', function() {
                     var msg = JSON.parse(e.data);
                     console.log('Mensaje:', msg.type);
                     if (msg.type === 'players-list') {
-                        // Guardar lista pero NO mostrar automáticamente
+                        // Guardar lista y actualizar contador
                         window.cachedPlayers = msg.players || [];
+                        console.log('📋 Lista guardada:', window.cachedPlayers);
+                        
+                        // Actualizar contador de jugadores en línea
+                        var counter = document.getElementById('online-players');
+                        if (counter && msg.players) {
+                            var total = msg.players.length || 0;
+                            counter.innerHTML = '🟢 ' + total + ' en línea';
+                        }
                     }
                 } catch(err) {}
             };
