@@ -340,6 +340,48 @@ window.showPlayersList = function() {
         return;
     }
     
+    list.innerHTML = '<li style="padding:10px;">⏳ Cargando...</li>';
+    modal.style.display = 'flex';
+    
+    // Usar WebSocket para pedir lista
+    if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({ type: 'get-players' }));
+    } else {
+        // Si no hay WebSocket, intentarFirebase
+        if (window.db) {
+            console.log('🔥 Leyendo jugadores de Firebase...');
+            window.db.ref('jugadores').once('value', function(snapshot) {
+                var html = '<li style="padding:10px;border-bottom:2px solid #2ecc71;">🟢 ' + myName + ' (tú)</li>';
+                var now = Date.now();
+                var players = [];
+                
+                snapshot.forEach(function(child) {
+                    var data = child.val();
+                    var playerName = data.nombre || '';
+                    if (playerName === myName || !playerName) return;
+                    
+                    var lastSeen = data.ultimo || 0;
+                    var diff = now - lastSeen;
+                    var isOnline = diff < 10000;
+                    players.push({ nombre: playerName, online: isOnline });
+                });
+                
+                if (players.length === 0) {
+                    html += '<li style="padding:10px;color:#888;">No hay otros jugadores</li>';
+                } else {
+                    players.forEach(function(p) {
+                        var status = p.online ? '🟢' : '🔴';
+                        html += '<li style="padding:10px;border-bottom:1px solid #555;">' + status + ' ' + p.nombre + '</li>';
+                    });
+                }
+                list.innerHTML = html;
+            });
+        } else {
+            list.innerHTML = '<li style="padding:10px;color:#e74c3c;">❌ Sin conexión</li>';
+        }
+    }
+};
+    
     var html = '<li style="padding:10px;border-bottom:2px solid #2ecc71;">🟢 ' + myName + ' (tú)</li>';
     list.innerHTML = html;
     modal.style.display = 'flex';
@@ -545,7 +587,21 @@ function connectToServer() {
                 if (msg.type === 'new') createOtherPlayer(msg.id, msg.color);
                 if (msg.type === 'left') removeOtherPlayer(msg.id);
                 if (msg.type === 'players-list') {
-                    // Ya NO mostrar automáticamente - solo al presionar botón
+                    const list = document.getElementById('players-list');
+                    const modal = document.getElementById('players-modal');
+                    const myName = getSessionUsername() || 'Tú';
+                    if (list && modal) {
+                        let html = `<li style="padding:10px;border-bottom:2px solid #3498db;">⭐ ${myName} (tú)</li>`;
+                        if (msg.players && msg.players.length > 0) {
+                            msg.players.forEach((p, i) => {
+                                html += `<li style="padding:10px;border-bottom:1px solid #555;">⭐ ${p}</li>`;
+                            });
+                        } else {
+                            html += `<li style="padding:10px;color:#888;">Sin otros jugadores</li>`;
+                        }
+                        list.innerHTML = html;
+                        modal.style.display = 'flex';
+                    }
                 }
                 if (msg.type === 'registered') {
                     console.log('Registrado como:', msg.name);
