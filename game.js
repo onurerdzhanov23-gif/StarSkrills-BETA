@@ -13,6 +13,7 @@ function getMyName() {
     }
     return name;
 }
+window.getMyName = getMyName;
 
 // Dummy sendToServer to avoid errors - Firebase handles multiplayer now
 function sendToServer(data) {
@@ -340,56 +341,22 @@ window.showPlayersList = function() {
         return;
     }
     
-    // Mostrar buscando y pedir al WebSocket
+    // Mostrar modal inmediatamente
     list.innerHTML = '<li style="padding:10px;">⏳ Buscando jugadores...</li>';
     modal.style.display = 'flex';
     
-    if (ws && ws.readyState === WebSocket.OPEN) {
-        ws.send(JSON.stringify({ type: 'get-players' }));
-        // Mostrar datos guardados previously
-        setTimeout(function() {
-            var list = document.getElementById('players-list');
-            var modal = document.getElementById('players-modal');
-            var players = window.cachedPlayers || [];
-            var myN = getMyName() || 'Tú';
-            var html = '<li style="padding:10px;border-bottom:2px solid #2ecc71;">🟢 ' + myN + ' (tú)</li>';
-            if (players.length > 0) {
-                players.forEach(function(p) {
-                    html += '<li style="padding:10px;border-bottom:1px solid #555;">🟢 ' + p + '</li>';
-                });
-            } else {
-                html += '<li style="padding:10px;color:#888;">No hay otros jugadores</li>';
-            }
-            list.innerHTML = html;
-        }, 500);
+    // Usar datos guardados del WebSocket
+    var players = window.cachedPlayers || [];
+    var html = '<li style="padding:10px;border-bottom:2px solid #2ecc71;">🟢 ' + myName + ' (tú)</li>';
+    
+    if (players.length > 0) {
+        players.forEach(function(p) {
+            html += '<li style="padding:10px;border-bottom:1px solid #555;">🟢 ' + p + '</li>';
+        });
     } else {
-        list.innerHTML = '<li style="padding:10px;color:#e74c3c;">🔴 Conectando...</li>';
-        // Intentar Firebase si no hay WS
-        if (window.db) {
-            window.db.ref('jugadores').once('value', function(snapshot) {
-                var html = '<li style="padding:10px;border-bottom:2px solid #2ecc71;">🟢 ' + myName + ' (tú)</li>';
-                var now = Date.now();
-                var count = 0;
-                
-                snapshot.forEach(function(child) {
-                    var data = child.val();
-                    var pName = data.nombre || '';
-                    if (pName === myName || !pName) return;
-                    
-                    var diff = now - (data.ultimo || 0);
-                    var online = diff < 15000;
-                    var status = online ? '🟢' : '🔴';
-                    html += '<li style="padding:10px;border-bottom:1px solid #555;">' + status + ' ' + pName + '</li>';
-                    count++;
-                });
-                
-                if (count === 0) {
-                    html += '<li style="padding:10px;color:#888;">No hay otros jugadores</li>';
-                }
-                list.innerHTML = html;
-            });
-        }
+        html += '<li style="padding:10px;color:#888;">No hay otros jugadores</li>';
     }
+    list.innerHTML = html;
 };
 
 function formatTimeDiff(ms) {
