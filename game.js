@@ -341,54 +341,17 @@ window.showPlayersList = function() {
         return;
     }
     
-    var html = '<li style="padding:10px;border-bottom:2px solid #2ecc71;">🟢 ' + myName + ' (tú)</li>';
-    list.innerHTML = html;
+    // Mostrar modal primero
+    list.innerHTML = '<li style="padding:10px;">⏳ Buscando jugadores...</li>';
     modal.style.display = 'flex';
     
-    // Always try to show players from Firebase directly
-    if (window.db) {
-        console.log('🔥 Leyendo jugadores de Firebase...');
-        window.db.ref('jugadores').once('value', function(snapshot) {
-            var html = '<li style="padding:10px;border-bottom:2px solid #2ecc71;">🟢 ' + myName + ' (tú)</li>';
-            var now = Date.now();
-            var players = [];
-            
-            console.log('🔥 Players in DB:', snapshot.numChildren());
-            
-            snapshot.forEach(function(child) {
-                var id = child.key;
-                var data = child.val();
-                var playerName = data.nombre || '';
-                
-                if (playerName === myName) return;
-                if (!playerName || playerName.length < 1) return;
-                
-                var lastSeen = data.ultimo || 0;
-                var diff = now - lastSeen;
-                var isOnline = diff < 10000;
-                players.push({ nombre: playerName, online: isOnline, ultimo: lastSeen });
-            });
-            
-            if (players.length === 0) {
-                html += '<li style="padding:10px;color:#888;">No hay otros jugadores</li>';
-            } else {
-                players.sort(function(a, b) { return (b.online ? 1 : 0) - (a.online ? 1 : 0); });
-                players.forEach(function(p) {
-                    var status = p.online ? '🟢 En juego' : '🔴 ' + formatTimeDiff(now - p.ultimo);
-                    var color = p.online ? '#2ecc71' : '#e74c3c';
-                    html += '<li style="padding:10px;border-bottom:1px solid #444;color:' + color + ';">' + status + ' - ' + p.nombre + '</li>';
-                });
-            }
-            
-            console.log('🔥 Players shown:', players.length);
-            list.innerHTML = html;
-        }).catch(function(err) {
-            console.error('Firebase error:', err);
-            list.innerHTML = '<li style="padding:10px;color:#e74c3c;">❌ Error de Firebase</li>';
-        });
+    // Pedir lista al WebSocket
+    if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({ type: 'get-players' }));
     } else {
-        list.innerHTML = '<li style="padding:10px;color:#e74c3c;">⚠️ Firebase no disponible</li>';
-}
+        // Si no hay WS, mostrar offline
+        list.innerHTML = '<li style="padding:10px;color:#e74c3c;">🔴 Sin conexión al servidor</li>';
+    }
 };
 
 function formatTimeDiff(ms) {
@@ -560,7 +523,22 @@ function connectToServer() {
                 if (msg.type === 'new') createOtherPlayer(msg.id, msg.color);
                 if (msg.type === 'left') removeOtherPlayer(msg.id);
                 if (msg.type === 'players-list') {
-                    // NO mostrar automáticamente
+                    // Mostrar lista de jugadores
+                    var list = document.getElementById('players-list');
+                    var modal = document.getElementById('players-modal');
+                    var myN = getMyName() || 'Tú';
+                    if (list && modal) {
+                        var html = '<li style="padding:10px;border-bottom:2px solid #2ecc71;">🟢 ' + myN + ' (tú)</li>';
+                        if (msg.players && msg.players.length > 0) {
+                            msg.players.forEach(function(p) {
+                                html += '<li style="padding:10px;border-bottom:1px solid #555;">🟢 ' + p + '</li>';
+                            });
+                        } else {
+                            html += '<li style="padding:10px;color:#888;">No hay otros jugadores</li>';
+                        }
+                        list.innerHTML = html;
+                        modal.style.display = 'flex';
+                    }
                 }
                 if (msg.type === 'registered') {
                     console.log('Registrado como:', msg.name);
