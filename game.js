@@ -14,6 +14,11 @@ function getMyName() {
     return name;
 }
 
+// Dummy sendToServer to avoid errors - Firebase handles multiplayer now
+function sendToServer(data) {
+    // Not used anymore
+}
+
 function connectWebSocket() {
     return new Promise(function(resolve, reject) {
         // Try multiple WebSocket URLs
@@ -4811,15 +4816,6 @@ function createDetailedBrawler(colorHex) {
                 // Enviar posición al servidor
                 if (isOnline && ws && ws.readyState === WebSocket.OPEN) {
                     ws.send(JSON.stringify({ type: 'move', x: playerGroup.position.x, y: playerGroup.position.z }));
-                }
-
-                // Enviar posición al servidor (WebSocket)
-                if (isOnline && ws && myPlayerId) {
-                    sendToServer({
-                        type: 'move',
-                        x: playerGroup.position.x,
-                        y: playerGroup.position.z
-                    });
                 }
 
                 // 🔥 FIREBASE: Actualizar posición
