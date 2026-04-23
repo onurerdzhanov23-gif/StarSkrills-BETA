@@ -346,22 +346,29 @@ window.showPlayersList = function() {
         return;
     }
     
-    // Mostrar modal inmediatamente
+    // Mostrar modal
     list.innerHTML = '<li style="padding:10px;">⏳ Buscando jugadores...</li>';
     modal.style.display = 'flex';
     
-    // Usar datos guardados del WebSocket
-    var players = window.cachedPlayers || [];
-    var html = '<li style="padding:10px;border-bottom:2px solid #2ecc71;">🟢 ' + myName + ' (tú)</li>';
-    
-    if (players.length > 0) {
-        players.forEach(function(p) {
-            html += '<li style="padding:10px;border-bottom:1px solid #555;">🟢 ' + p + '</li>';
-        });
-    } else {
-        html += '<li style="padding:10px;color:#888;">No hay otros jugadores</li>';
+    // Pedir lista inmediatamente
+    if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({ type: 'get-players' }));
     }
-    list.innerHTML = html;
+    
+    // Mostrar datos (del cache o venirÃ¡n)
+    setTimeout(function() {
+        var players = window.cachedPlayers || [];
+        var html = '<li style="padding:10px;border-bottom:2px solid #2ecc71;">🟢 ' + myName + ' (tú)</li>';
+        
+        if (players.length > 0) {
+            players.forEach(function(p) {
+                html += '<li style="padding:10px;border-bottom:1px solid #555;">🟢 ' + p + '</li>';
+            });
+        } else {
+            html += '<li style="padding:10px;color:#888;">No hay otros jugadores aún</li>';
+        }
+        list.innerHTML = html;
+    }, 300);
 };
 
 function formatTimeDiff(ms) {
