@@ -350,8 +350,13 @@ window.showPlayersList = function() {
         return;
     }
     
-    // Mostrar modal
-    list.innerHTML = '<li style="padding:10px;">⏳ Buscando jugadores...</li>';
+    // Registrar en servidor si hay nombre
+    if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({ type: 'register', name: myName }));
+    }
+    
+    // Mostrar cargando
+    list.innerHTML = '<li style="padding:10px;">⏳ Cargando jugadores...</li>';
     modal.style.display = 'flex';
     
     // SIEMPRE pedir lista fresca al servidor
@@ -359,21 +364,27 @@ window.showPlayersList = function() {
         ws.send(JSON.stringify({ type: 'get-players' }));
     }
     
-    // Ahora waiting hasta que llegue la respuesta
+    // Verificar cada 100ms hasta que lleguen datos (máximo 1 segundo)
     var checkCount = 0;
     var checkInterval = setInterval(function() {
         var players = window.cachedPlayers || [];
         var html = '<li style="padding:10px;border-bottom:2px solid #2ecc71;">🟢 ' + myName + ' (tú)</li>';
         
         if (players.length > 0) {
-            players.forEach(function(p) {
-                // Mostrar en verde (conectado) o rojo (desconectado)
-                html += '<li style="padding:10px;border-bottom:1px solid #555;">🟢 ' + p + '</li>';
-            });
+            // Filtrar tu propio nombre para no duplicar
+            var otros = players.filter(function(p) { return p !== myName; });
+            
+            if (otros.length > 0) {
+                otros.forEach(function(p) {
+                    html += '<li style="padding:10px;border-bottom:1px solid #555;">🟢 ' + p + ' - En línea</li>';
+                });
+            } else {
+                html += '<li style="padding:10px;color:#888;">Nadie más en línea</li>';
+            }
             clearInterval(checkInterval);
-        } else if (checkCount > 5) {
+        } else if (checkCount > 10) {
             clearInterval(checkInterval);
-            html += '<li style="padding:10px;color:#e74c3c;">🔴 Servidor sin respuesta</li>';
+            html += '<li style="padding:10px;color:#888;">Esperando respuesta del servidor...</li>';
         }
         
         list.innerHTML = html;
