@@ -657,20 +657,13 @@ window.sendGameEnd = function() {
 };
 
 function openStarDrop() {
-    // Buscar y mostrar la pantalla de Star Drop
-    try {
-        const starDropScreen = document.getElementById('star-drop-screen') || 
-                               document.getElementById('star-drop-overlay') ||
-                               document.querySelector('[id*="star"]');
-        if (starDropScreen) starDropScreen.style.display = 'flex';
-    } catch(e) {
-        console.log('openStarDrop error:', e);
+    if (typeof window.openStarDrop === 'function') {
+        window.openStarDrop();
     }
-}
+};
 
 // Asignar a window
 window.runIntroSequence = runIntroSequence;
-window.openStarDrop = openStarDrop;
 
 // Función para salir de sala
 function sendPosition(position, rotation) {
