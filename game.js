@@ -1910,33 +1910,10 @@ handleVoiceIceCandidate = async (data) => {
                 grassBlocks.length = 0;
             }
 
-            // Suelo con textura de pasto más clara
-            function createGroundTexture() {
-                const canvas = document.createElement('canvas');
-                canvas.width = 128; canvas.height = 128;
-                const ctx = canvas.getContext('2d');
-                ctx.fillStyle = '#7CB342'; // Verde más claro
-                ctx.fillRect(0, 0, 128, 128);
-                ctx.fillStyle = '#8BC34A'; // Verde claro
-                for (let i = 0; i < 40; i++) {
-                    ctx.fillRect(Math.random() * 128, Math.random() * 128, 3, 6);
-                }
-                ctx.fillStyle = '#9CCC65'; // Verde muy claro
-                for (let i = 0; i < 20; i++) {
-                    ctx.fillRect(Math.random() * 128, Math.random() * 128, 2, 4);
-                }
-                const texture = new THREE.CanvasTexture(canvas);
-                texture.wrapS = THREE.RepeatWrapping;
-                texture.wrapT = THREE.RepeatWrapping;
-                return texture;
-            }
-            const groundTexture = createGroundTexture();
-            groundTexture.repeat.set(mapSize / 4, mapSize / 4);
-            
+            // Suelo con patrón tipo tablero decorativo para dar aspecto de arena
             const groundGeometry = new THREE.PlaneGeometry(mapSize, mapSize);
             const groundMaterial = new THREE.MeshStandardMaterial({
-                map: groundTexture,
-                roughness: 0.9,
+                color: 0x8BC34A, roughness: 1.0,
             });
             ground = new THREE.Mesh(groundGeometry, groundMaterial);
             ground.rotation.x = -Math.PI / 2;
