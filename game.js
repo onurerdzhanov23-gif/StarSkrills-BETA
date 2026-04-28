@@ -99,11 +99,18 @@ window.addEventListener('load', function() {
                     var msg = JSON.parse(e.data);
                     console.log('Mensaje:', msg.type);
                     if (msg.type === 'players-list') {
-                        // Guardar lista y actualizar contador
+                        var oldPlayers = window.cachedPlayers || [];
                         window.cachedPlayers = msg.players || [];
+                        
+                        // Detectar desconectados (estaban antes, ya no están)
+                        oldPlayers.forEach(function(p) {
+                            if (!msg.players.includes(p)) {
+                                playerLastSeen[p] = Date.now();
+                            }
+                        });
+                        
                         console.log('📋 Lista guardada:', window.cachedPlayers);
                         
-                        // Actualizar contador de jugadores en línea
                         var counter = document.getElementById('online-players');
                         if (counter && msg.players) {
                             var total = msg.players.length || 0;
@@ -338,6 +345,8 @@ function getSessionUsername() {
     return sessionStorage.getItem('myName') || '';
 }
 
+var playerLastSeen = {};
+
 window.showPlayersList = function() {
     var modal = document.getElementById('players-modal');
     var list = document.getElementById('players-list');
@@ -355,42 +364,46 @@ window.showPlayersList = function() {
         ws.send(JSON.stringify({ type: 'register', name: myName }));
     }
     
-    // Mostrar cargando
-    list.innerHTML = '<li style="padding:10px;">⏳ Cargando jugadores...</li>';
-    modal.style.display = 'flex';
-    
-    // SIEMPRE pedir lista fresca al servidor
+    // Pedir lista
     if (ws && ws.readyState === WebSocket.OPEN) {
         ws.send(JSON.stringify({ type: 'get-players' }));
     }
     
-    // Verificar cada 100ms hasta que lleguen datos (máximo 1 segundo)
-    var checkCount = 0;
-    var checkInterval = setInterval(function() {
+    // Intervalo cada 3 segundos
+    var refreshInterval = setInterval(function() {
         var players = window.cachedPlayers || [];
+        
+        // Filtrar tu propio nombre
+        var otros = players.filter(function(p) { return p !== myName; });
+        
         var html = '<li style="padding:10px;border-bottom:2px solid #2ecc71;">🟢 ' + myName + ' (tú)</li>';
         
-        if (players.length > 0) {
-            // Filtrar tu propio nombre para no duplicar
-            var otros = players.filter(function(p) { return p !== myName; });
-            
-            if (otros.length > 0) {
-                otros.forEach(function(p) {
-                    html += '<li style="padding:10px;border-bottom:1px solid #555;">🟢 ' + p + ' - En línea</li>';
-                });
-            } else {
-                html += '<li style="padding:10px;color:#888;">Nadie más en línea</li>';
+        if (otros.length > 0) {
+            otros.forEach(function(p) {
+                html += '<li style="padding:10px;border-bottom:1px solid #555;">🟢 ' + p + ' - En línea</li>';
+            });
+        }
+        
+        // Mostrar desconectados (guardados previamente)
+        Object.keys(playerLastSeen).forEach(function(p) {
+            if (p !== myName && !players.includes(p)) {
+                var diff = Date.now() - playerLastSeen[p];
+                var tiempo = formatTimeDiff(diff);
+                html += '<li style="padding:10px;border-bottom:1px solid #555;color:#e74c3c;">🔴 ' + p + ' - ' + tiempo + '</li>';
             }
-            clearInterval(checkInterval);
-        } else if (checkCount > 10) {
-            clearInterval(checkInterval);
-            html += '<li style="padding:10px;color:#888;">Esperando respuesta del servidor...</li>';
+        });
+        
+        if (otros.length === 0 && Object.keys(playerLastSeen).length === 0) {
+            html += '<li style="padding:10px;color:#888;">Nadie más en línea</li>';
         }
         
         list.innerHTML = html;
-        checkCount++;
-    }, 100);
-};
+    }, 3000);
+    
+    // Mostrar inicial
+    list.innerHTML = '<li style="padding:10px;">⏳ Cargando...</li>';
+    modal.style.display = 'flex';
+}
 
 function formatTimeDiff(ms) {
     var segundos = Math.floor(ms / 1000);
@@ -398,9 +411,10 @@ function formatTimeDiff(ms) {
     var horas = Math.floor(ms / 3600000);
     var dias = Math.floor(ms / 86400000);
     
-    if (horas < 1) return '-1h';
-    if (dias < 1) return horas + 'h';
-    return dias + 'd';
+    if (minutos < 1) return 'Hace menos de 1 min';
+    if (horas < 1) return 'Hace ' + minutos + ' min';
+    if (dias < 1) return 'Hace ' + horas + 'h';
+return 'Hace ' + dias + ' dia(s)';
 }
 
 function saveUsername(name) {
@@ -575,9 +589,15 @@ function connectToServer() {
                             html += '<li style="padding:10px;color:#888;">No hay otros jugadores</li>';
                         }
                         list.innerHTML = html;
-                        modal.style.display = 'flex';
-                    }
-                }
+modal.style.display = 'flex';
+    }
+    
+    // Cerrar modal
+    window.closePlayersList = function() {
+        modal.style.display = 'none';
+        clearInterval(refreshInterval);
+    };
+}
                 if (msg.type === 'registered') {
                     console.log('Registrado como:', msg.name);
                 }
