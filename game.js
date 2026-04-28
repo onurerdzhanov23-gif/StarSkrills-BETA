@@ -1910,10 +1910,12 @@ handleVoiceIceCandidate = async (data) => {
                 grassBlocks.length = 0;
             }
 
-            // Suelo con patrón tipo tablero decorativo para dar aspecto de arena
+            // Suelo con textura de pasto
             const groundGeometry = new THREE.PlaneGeometry(mapSize, mapSize);
+            grassTexture.repeat.set(mapSize / 4, mapSize / 4);
             const groundMaterial = new THREE.MeshStandardMaterial({
-                color: 0x8BC34A, roughness: 1.0,
+                map: grassTexture,
+                roughness: 0.9,
             });
             ground = new THREE.Mesh(groundGeometry, groundMaterial);
             ground.rotation.x = -Math.PI / 2;
