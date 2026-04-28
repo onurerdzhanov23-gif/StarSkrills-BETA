@@ -6353,42 +6353,54 @@ createMenuParticles();
                 crack.classList.add('crack-group', 'crack-' + (i + 1));
                 crack.style.opacity = '0';
                 
-                const numLines = 2 + Math.floor(Math.random() * 3);
-                const startX = 30 + Math.random() * 100;
-                const startY = 30 + Math.random() * 160;
+                const numLines = 3 + Math.floor(Math.random() * 3);
+                const startX = 30 + Math.random() * 50;
+                const startY = 20 + Math.random() * 80;
                 
                 for (let j = 0; j < numLines; j++) {
-                    let x = startX + (Math.random() - 0.5) * 60;
-                    let y = startY + (Math.random() - 0.5) * 60;
+                    let x = startX + (Math.random() - 0.5) * 40;
+                    let y = startY + (Math.random() - 0.5) * 40;
                     
                     const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
                     let d = 'M' + x + ',' + y;
                     
-                    const segments = 2 + Math.floor(Math.random() * 3);
+                    const segments = 3 + Math.floor(Math.random() * 3);
                     for (let s = 0; s < segments; s++) {
-                        x += (Math.random() - 0.5) * 40;
-                        y += (Math.random() - 0.5) * 40;
+                        x += (Math.random() - 0.5) * 25;
+                        y += (Math.random() - 0.5) * 25;
                         d += ' L' + x.toFixed(1) + ',' + y.toFixed(1);
                     }
                     
                     path.setAttribute('d', d);
-                    path.setAttribute('stroke', 'rgba(0,0,0,0.6)');
-                    path.setAttribute('stroke-width', (1 + Math.random()).toFixed(1));
+                    path.setAttribute('stroke', 'rgba(0,0,0,0.85)');
+                    path.setAttribute('stroke-width', (1.5 + Math.random() * 1.5).toFixed(1));
                     path.setAttribute('fill', 'none');
                     path.setAttribute('stroke-linecap', 'round');
+                    path.setAttribute('stroke-linejoin', 'round');
                     crack.appendChild(path);
                     
-                    if (Math.random() > 0.5) {
+                    // Add depth shadow
+                    const shadow = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                    shadow.setAttribute('d', d);
+                    shadow.setAttribute('stroke', 'rgba(255,255,255,0.3)');
+                    shadow.setAttribute('stroke-width', (0.5 + Math.random() * 0.5).toFixed(1));
+                    shadow.setAttribute('fill', 'none');
+                    shadow.setAttribute('stroke-linecap', 'round');
+                    shadow.setAttribute('stroke-linejoin', 'round');
+                    shadow.style.transform = 'translate(1px, 1px)';
+                    crack.insertBefore(shadow, path);
+                    
+                    if (Math.random() > 0.4) {
                         const branchX = x;
                         const branchY = y;
                         const branch = document.createElementNS('http://www.w3.org/2000/svg', 'path');
                         let bd = 'M' + branchX + ',' + branchY;
-                        let bx = branchX + (Math.random() - 0.5) * 30;
-                        let by = branchY + (Math.random() - 0.5) * 30;
+                        let bx = branchX + (Math.random() - 0.5) * 20;
+                        let by = branchY + (Math.random() - 0.5) * 20;
                         bd += ' L' + bx.toFixed(1) + ',' + by.toFixed(1);
                         branch.setAttribute('d', bd);
-                        branch.setAttribute('stroke', 'rgba(0,0,0,0.5)');
-                        branch.setAttribute('stroke-width', '0.8');
+                        branch.setAttribute('stroke', 'rgba(0,0,0,0.7)');
+                        branch.setAttribute('stroke-width', '1');
                         branch.setAttribute('fill', 'none');
                         branch.setAttribute('stroke-linecap', 'round');
                         crack.appendChild(branch);

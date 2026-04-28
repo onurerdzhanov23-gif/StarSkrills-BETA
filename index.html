@@ -323,10 +323,22 @@
             z-index: 7000;
             align-items: center;
             justify-content: center;
+            pointer-events: none;
         }
         
         .star-drop-menu.active {
             display: flex;
+            pointer-events: auto;
+        }
+        
+        .star-drop-blocker {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            cursor: default;
         }
         
         .star-drop-bg {
@@ -369,18 +381,16 @@
             transform: translateX(-50%);
             width: 180px;
             height: 200px;
-            background: linear-gradient(135deg, 
-                rgba(255,255,255,0.4) 0%, 
-                rgba(0,255,200,0.6) 25%, 
-                rgba(0,200,255,0.8) 50%, 
-                rgba(0,150,255,0.9) 75%, 
-                rgba(0,100,200,0.8) 100%);
+            background: linear-gradient(180deg, 
+                rgba(150,255,200,0.9) 0%, 
+                rgba(0,220,180,0.95) 30%,
+                rgba(0,180,220,0.95) 60%, 
+                rgba(0,140,200,0.95) 100%);
             clip-path: polygon(50% 0%, 85% 15%, 100% 45%, 85% 75%, 50% 100%, 15% 75%, 0% 45%, 15% 15%);
             box-shadow: 
-                inset 0 0 30px rgba(255,255,255,0.5),
-                inset -10px -10px 30px rgba(0,0,0,0.2),
-                0 0 40px rgba(0,255,200,0.5),
-                0 0 80px rgba(0,200,255,0.3);
+                inset 0 0 20px rgba(255,255,255,0.6),
+                inset -5px -5px 15px rgba(0,100,100,0.3),
+                0 0 25px rgba(0,255,180,0.4);
             transition: all 0.1s ease;
         }
         
@@ -389,44 +399,51 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 220px;
-            height: 220px;
-            background: radial-gradient(circle, rgba(0,255,200,0.4) 0%, rgba(0,200,255,0.2) 40%, transparent 70%);
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(0,200,180,0.5) 0%, rgba(0,150,200,0.3) 40%, transparent 70%);
             border-radius: 50%;
             animation: gemPulse 2s ease-in-out infinite;
         }
         
         .gem-inner {
             position: absolute;
-            top: 60px;
+            top: 70px;
             left: 50%;
             transform: translateX(-50%);
-            width: 100px;
-            height: 120px;
+            width: 90px;
+            height: 110px;
             background: linear-gradient(180deg, 
-                rgba(255,255,255,0.6) 0%, 
-                rgba(255,255,255,0.2) 50%, 
-                rgba(0,255,200,0.3) 100%);
+                rgba(200,255,230,0.8) 0%, 
+                rgba(100,255,220,0.7) 50%, 
+                rgba(0,200,180,0.6) 100%);
             clip-path: polygon(50% 0%, 85% 15%, 100% 45%, 85% 75%, 50% 100%, 15% 75%, 0% 45%, 15% 15%);
-            box-shadow: inset 0 0 20px rgba(255,255,255,0.8);
+            box-shadow: 
+                inset 0 0 15px rgba(255,255,255,0.9),
+                inset -3px -3px 10px rgba(0,100,100,0.2);
         }
         
-        /* Brighter shine line */
+        /* Brighter shine line - más sutil */
         .gem-shine {
             position: absolute;
-            top: 30px;
-            left: 50%;
-            transform: translateX(-50%) rotate(-20deg);
-            width: 120px;
-            height: 8px;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.9), transparent);
-            border-radius: 4px;
-            animation: shineMove 3s ease-in-out infinite;
+            top: 40px;
+            left: 35%;
+            width: 60px;
+            height: 6px;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(255,255,255,0.7) 30%, 
+                rgba(255,255,255,0.9) 50%, 
+                rgba(255,255,255,0.7) 70%,
+                transparent);
+            border-radius: 3px;
+            animation: shineMove 4s ease-in-out infinite;
+            opacity: 0.6;
         }
         
         @keyframes shineMove {
-            0%, 100% { opacity: 0.3; transform: translateX(-50%) rotate(-20deg) translateY(0); }
-            50% { opacity: 1; transform: translateX(-50%) rotate(-20deg) translateY(20px); }
+            0%, 100% { opacity: 0.4; transform: translateX(0); }
+            50% { opacity: 0.7; transform: translateX(10px); }
         }
         
         .gem-container.opening .gem-main {
@@ -3255,14 +3272,32 @@
     </div>
     
     <!-- Star Drop Menu -->
-    <div id="star-drop-menu" class="star-drop-menu">
+<div id="star-drop-menu" class="star-drop-menu">
+        <div class="star-drop-blocker"></div>
         <div id="star-drop-bg" class="star-drop-bg"></div>
-        <button id="star-drop-close" class="star-drop-close">X</button>
+        <button id="star-drop-close" class="star-drop-close" style="display:none;">X</button>
         
-        <div id="rarity-display">
-            <div id="rarity-name">¿?</div>
-            <div id="rarity-percent">Toca para revelar</div>
+        <div class="gem-container" id="gem-container">
+            <div class="gem-glow" id="gem-glow"></div>
+            <div class="gem-main" id="gem-main">
+                <div class="gem-inner"></div>
+                <div class="gem-shine"></div>
+                <div class="gem-facet"></div>
+            </div>
+            <div class="crack-overlay" id="crack-overlay" style="transform: translateX(-50%);">
+                <svg viewBox="0 0 180 200" xmlns="http://www.w3.org/2000/svg" id="crack-svg">
+                    <defs>
+                        <linearGradient id="crackGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:rgba(0,0,0,0.8)"/>
+                            <stop offset="100%" style="stop-color:rgba(50,50,50,0.6)"/>
+                        </linearGradient>
+                    </defs>
+                </svg>
+            </div>
         </div>
+        
+        <div id="tap-display">Toca 4 veces</div>
+    </div>
         
         <div class="gem-container" id="gem-container">
             <div class="gem-glow" id="gem-glow"></div>
