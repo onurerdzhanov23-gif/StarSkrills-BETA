@@ -656,12 +656,6 @@ window.sendGameEnd = function() {
     }
 };
 
-function openStarDrop() {
-    if (typeof window.openStarDrop === 'function') {
-        window.openStarDrop();
-    }
-};
-
 // Asignar a window
 window.runIntroSequence = runIntroSequence;
 
