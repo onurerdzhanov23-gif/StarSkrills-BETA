@@ -6445,6 +6445,22 @@ createMenuParticles();
         
         window.openStarDrop = function() {
             try {
+                console.log('Opening Star Drop...');
+                
+                // Verificar elementos
+                const menu = document.getElementById('star-drop-menu');
+                const gem = document.getElementById('gem-container');
+                const tapDisplay = document.getElementById('tap-display');
+                const rarityName = document.getElementById('rarity-name');
+                const rarityPercent = document.getElementById('rarity-percent');
+                
+                console.log('Elements:', { menu, gem, tapDisplay, rarityName, rarityPercent });
+                
+                if (!menu || !gem || !tapDisplay) {
+                    console.error('Faltan elementos del DOM');
+                    return;
+                }
+                
                 // Hide all sub menus safely
                 const subMenu = document.getElementById('sub-menu-overlay');
                 const emptySub = document.getElementById('empty-sub-menu');
@@ -6472,20 +6488,13 @@ createMenuParticles();
                 tapThresholds = calculateTapThresholds(finalRarityIndex);
                 
                 // Reset UI
-                const menu = document.getElementById('star-drop-menu');
-                const gem = document.getElementById('gem-container');
-                const tapDisplay = document.getElementById('tap-display');
-                const rarityName = document.getElementById('rarity-name');
-                const rarityPercent = document.getElementById('rarity-percent');
-                
                 gem.classList.remove('breaking', 'tap', 'shake', 'vibrate', 'legendary');
                 tapDisplay.textContent = 'Toca ' + MAX_TAPS + ' veces';
-                rarityName.textContent = '¿?';
-                rarityName.style.color = '#00CCFF';
-                rarityPercent.textContent = 'Toca para revelar';
+                if (rarityName) rarityName.textContent = '¿?';
+                if (rarityPercent) rarityPercent.textContent = 'Toca para revelar';
                 
                 const crackOverlay = document.getElementById('crack-overlay');
-                crackOverlay.className = 'crack-overlay';
+                if (crackOverlay) crackOverlay.className = 'crack-overlay';
                 gem.classList.remove('crack-1', 'crack-2', 'crack-3', 'crack-4');
                 generateRandomCracks();
                 
@@ -6503,6 +6512,7 @@ createMenuParticles();
                 
                 SoundEngine.play('ui');
                 
+                console.log('Star Drop opened successfully!');
             } catch(e) {
                 console.error('Star Drop Error:', e);
             }
