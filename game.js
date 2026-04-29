@@ -6488,7 +6488,7 @@ createMenuParticles();
                 tapThresholds = calculateTapThresholds(finalRarityIndex);
                 
                 // Reset UI
-                gem.classList.remove('breaking', 'tap', 'shake', 'vibrate', 'legendary');
+                gem.classList.remove('breaking', 'tap', 'shake', 'vibrate', 'legendary', 'opening');
                 tapDisplay.textContent = 'Toca ' + MAX_TAPS + ' veces';
                 if (rarityName) rarityName.textContent = '¿?';
                 if (rarityPercent) rarityPercent.textContent = 'Toca para revelar';
@@ -6499,22 +6499,29 @@ createMenuParticles();
                 generateRandomCracks();
                 
                 updateGemAppearance(0);
+                
+                // Force show menu
+                menu.style.display = 'flex';
                 menu.classList.add('active');
                 
                 // Epic entrance animation
                 gem.classList.add('opening');
-                gem.classList.remove('opening');
-                void gem.offsetWidth; // Force reflow
-                gem.classList.add('opening');
+                void gem.offsetWidth;
                 
                 // Sparkle particles
                 createSparkles();
                 
-                SoundEngine.play('ui');
+                try { SoundEngine.play('ui'); } catch(e) {}
                 
-                console.log('Star Drop opened successfully!');
+                console.log('Star Drop opened! Menu:', menu.style.display);
             } catch(e) {
                 console.error('Star Drop Error:', e);
+                // Fallback - try to show manually
+                const menu = document.getElementById('star-drop-menu');
+                if(menu) {
+                    menu.style.display = 'flex';
+                    menu.classList.add('active');
+                }
             }
         };
         
