@@ -384,15 +384,15 @@
             width: 180px;
             height: 200px;
             background: linear-gradient(180deg, 
-                rgba(80,200,170,0.9) 0%, 
-                rgba(0,160,140,0.95) 30%,
-                rgba(0,120,160,0.95) 60%, 
-                rgba(0,100,140,0.95) 100%);
+                rgba(40,120,100,0.9) 0%, 
+                rgba(0,140,120,0.95) 30%,
+                rgba(0,110,140,0.95) 60%, 
+                rgba(0,90,120,0.95) 100%);
             clip-path: polygon(50% 0%, 85% 15%, 100% 45%, 85% 75%, 50% 100%, 15% 75%, 0% 45%, 15% 15%);
             box-shadow: 
-                inset 0 0 15px rgba(200,230,220,0.3),
-                inset -5px -5px 15px rgba(0,80,80,0.3),
-                0 0 20px rgba(0,200,150,0.3);
+                inset 0 0 15px rgba(150,200,180,0.2),
+                inset -5px -5px 15px rgba(0,60,60,0.3),
+                0 0 15px rgba(0,150,120,0.2);
             transition: all 0.1s ease;
         }
         
@@ -416,30 +416,19 @@
             width: 90px;
             height: 110px;
             background: linear-gradient(180deg, 
-                rgba(120,200,170,0.6) 0%, 
-                rgba(60,200,160,0.5) 50%, 
-                rgba(0,150,130,0.5) 100%);
+                rgba(40,140,120,0.5) 0%, 
+                rgba(30,140,110,0.4) 50%, 
+                rgba(0,120,100,0.4) 100%);
             clip-path: polygon(50% 0%, 85% 15%, 100% 45%, 85% 75%, 50% 100%, 15% 75%, 0% 45%, 15% 15%);
             box-shadow: 
-                inset 0 0 10px rgba(180,220,200,0.4),
-                inset -3px -3px 10px rgba(0,80,80,0.2);
+                inset 0 0 8px rgba(100,160,140,0.3),
+                inset -3px -3px 10px rgba(0,60,60,0.2);
         }
         
         /* Brighter shine line - más sutil */
         .gem-shine {
-            position: absolute;
-            top: 40px;
-            left: 35%;
-            width: 60px;
-            height: 6px;
-            background: linear-gradient(90deg, 
-                transparent, 
-                rgba(200,230,220,0.3) 30%, 
-                rgba(255,255,255,0.5) 50%, 
-                rgba(200,230,220,0.3) 70%,
-                transparent);
-            border-radius: 3px;
-            animation: shineMove 4s ease-in-out infinite;
+            display: none;
+        }
             opacity: 0.6;
         }
         
