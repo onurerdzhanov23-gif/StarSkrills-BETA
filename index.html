@@ -327,8 +327,9 @@
         }
         
         .star-drop-menu.active {
-            display: flex;
+            display: flex !important;
             pointer-events: auto;
+            z-index: 9000 !important;
         }
         
         .star-drop-blocker {
@@ -2802,7 +2803,7 @@
             <div id="spectating-name" style="color:#3498db;font-size:16px;margin-bottom:10px;"></div>
             <p style="font-size:12px;color:#888;margin:0;">Presiona ESC para salir</p>
         </div>
-        <button id="star-drop-btn" onclick="console.log('Clicked! openStarDrop:', typeof window.openStarDrop); if(window.openStarDrop){window.openStarDrop();} else {alert('game.js no cargado!');}" style="padding:25px 70px;font-size:28px;font-family:'Poppins',sans-serif;font-weight:700;background:linear-gradient(180deg,#f1c40f,#f39c12);border:5px solid #fff;border-radius:25px;color:#000;cursor:pointer;margin:12px;box-shadow:0 8px 0 #d68910;text-transform:uppercase;letter-spacing:1px;">⭐ STAR DROP</button>
+        <button id="star-drop-btn" onclick="try{window.openStarDrop();}catch(e){console.error(e)}" style="padding:25px 70px;font-size:28px;font-family:'Poppins',sans-serif;font-weight:700;background:linear-gradient(180deg,#f1c40f,#f39c12);border:5px solid #fff;border-radius:25px;color:#000;cursor:pointer;margin:12px;box-shadow:0 8px 0 #d68910;text-transform:uppercase;letter-spacing:1px;">⭐ STAR DROP</button>
         <!-- Star pieces encima del botón JUGAR -->
         <div id="star-pieces-container" style="display:flex;gap:12px;margin-bottom:15px;">
             <div style="width:50px;height:50px;background:rgba(255,255,255,0.2);border:3px solid rgba(255,255,255,0.4);border-radius:12px;display:flex;align-items:center;justify-content:center;">

@@ -6499,10 +6499,8 @@ createMenuParticles();
                 generateRandomCracks();
                 
                 updateGemAppearance(0);
-                
-                // Force show menu
-                menu.style.display = 'flex';
                 menu.classList.add('active');
+                menu.style.display = 'flex';
                 
                 // Epic entrance animation
                 gem.classList.add('opening');
@@ -6513,15 +6511,9 @@ createMenuParticles();
                 
                 try { SoundEngine.play('ui'); } catch(e) {}
                 
-                console.log('Star Drop opened! Menu:', menu.style.display);
+                console.log('Star Drop opened successfully!');
             } catch(e) {
                 console.error('Star Drop Error:', e);
-                // Fallback - try to show manually
-                const menu = document.getElementById('star-drop-menu');
-                if(menu) {
-                    menu.style.display = 'flex';
-                    menu.classList.add('active');
-                }
             }
         };
         
@@ -6597,27 +6589,26 @@ createMenuParticles();
             gem.style.animationDuration = rarity.rotationSpeed + 's';
         }
         
-        window.closeStarDrop = function() {
+window.closeStarDrop = function() {
             document.getElementById('star-drop-menu').classList.remove('active');
             document.getElementById('start-menu').style.display = 'flex';
             document.getElementById('settings-btn').style.display = 'flex';
             document.getElementById('trophy-display').style.display = 'flex';
-            document.getElementById('trophy-display').style.visibility = 'visible';
             document.getElementById('star-pieces-container').style.display = 'flex';
             const floatingBtn = document.getElementById('floating-star-drop-btn');
-if (floatingBtn) floatingBtn.style.display = 'flex';
+            if (floatingBtn) floatingBtn.style.display = 'flex';
             document.querySelector('.shop-btn').style.display = 'flex';
             document.querySelector('.extra-btn').style.display = 'flex';
             document.getElementById('bottom-left-rect').style.display = 'flex';
             
-            if (window.menuBrawler) {
+if (window.menuBrawler) {
                 window.menuBrawler.visible = true;
                 window.menuBrawler.rotation.set(0, -Math.PI/6, 0);
                 window.currentMenuState = 'breathe';
             }
-            if (window.initMenu3D) window.initMenu3D();
         };
         
+        // Listen for close
         document.getElementById('star-drop-close').addEventListener('click', closeStarDrop);
         
         let currentDisplayRarity = 0;
@@ -6857,10 +6848,22 @@ if (floatingBtn) floatingBtn.style.display = 'flex';
         
         function closeStarDrop() {
             document.getElementById('star-drop-menu').classList.remove('active');
-            document.getElementById('sub-menu-overlay').style.display = 'flex';
+            document.getElementById('star-drop-menu').style.display = 'none';
+            document.getElementById('start-menu').style.display = 'flex';
+            document.getElementById('settings-btn').style.display = 'flex';
+            document.getElementById('trophy-display').style.display = 'flex';
+            document.getElementById('star-pieces-container').style.display = 'flex';
+            const floatingBtn = document.getElementById('floating-star-drop-btn');
+            if (floatingBtn) floatingBtn.style.display = 'flex';
+            document.querySelector('.shop-btn').style.display = 'flex';
+            document.querySelector('.extra-btn').style.display = 'flex';
+            
+            if (window.menuBrawler) {
+                window.menuBrawler.visible = true;
+                window.menuBrawler.rotation.set(0, -Math.PI/6, 0);
+                window.currentMenuState = 'breathe';
+            }
         }
-        
-        document.getElementById('star-drop-close').addEventListener('click', closeStarDrop);
         
         function revealStarDropReward(rarityIndex) {
             const rarity = starDropRarities[rarityIndex];
