@@ -368,32 +368,39 @@
         
         .gem-container {
             position: absolute;
-            top: 50%;
+            top: 55%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 220px;
-            height: 260px;
+            width: 200px;
+            height: 240px;
             z-index: 5;
             cursor: pointer;
         }
         
         .gem-main {
             position: absolute;
-            top: 20px;
+            top: 0;
             left: 50%;
-            width: 180px;
-            height: 200px;
+            transform: translate(-50%, -50%);
+            width: 160px;
+            height: 180px;
             background: linear-gradient(180deg, 
-                rgba(40,120,100,0.9) 0%, 
-                rgba(0,140,120,0.95) 30%,
-                rgba(0,110,140,0.95) 60%, 
-                rgba(0,90,120,0.95) 100%);
+                rgba(30,100,90,0.95) 0%, 
+                rgba(20,80,70,0.95) 30%,
+                rgba(15,60,80,0.95) 60%, 
+                rgba(10,50,70,0.95) 100%);
             clip-path: polygon(50% 0%, 85% 15%, 100% 45%, 85% 75%, 50% 100%, 15% 75%, 0% 45%, 15% 15%);
             box-shadow: 
-                inset 0 0 15px rgba(150,200,180,0.2),
-                inset -5px -5px 15px rgba(0,60,60,0.3),
-                0 0 15px rgba(0,150,120,0.2);
+                inset 0 0 20px rgba(0,0,0,0.5),
+                inset -3px -3px 10px rgba(0,40,40,0.3),
+                0 0 20px rgba(0,120,100,0.3),
+                0 0 0 5px rgba(0,0,0,0.9),
+                0 5px 15px rgba(0,0,0,0.5);
             transition: all 0.1s ease;
+            border: none;
+            outline: 3px solid #000;
+            outline-offset: -4px;
+            filter: drop-shadow(0 0 5px rgba(0,0,0,0.8));
         }
         
         .gem-glow {
@@ -401,28 +408,28 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 200px;
-            height: 200px;
-            background: radial-gradient(circle, rgba(0,150,130,0.3) 0%, rgba(0,100,120,0.2) 40%, transparent 70%);
+            width: 180px;
+            height: 180px;
+            background: radial-gradient(circle, rgba(0,100,90,0.25) 0%, rgba(0,60,70,0.15) 40%, transparent 70%);
             border-radius: 50%;
             animation: gemPulse 2s ease-in-out infinite;
         }
         
         .gem-inner {
             position: absolute;
-            top: 70px;
+            top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 90px;
-            height: 110px;
+            width: 70px;
+            height: 90px;
             background: linear-gradient(180deg, 
-                rgba(40,140,120,0.5) 0%, 
-                rgba(30,140,110,0.4) 50%, 
-                rgba(0,120,100,0.4) 100%);
+                rgba(40,120,100,0.5) 0%, 
+                rgba(20,80,70,0.4) 50%, 
+                rgba(15,50,60,0.3) 100%);
             clip-path: polygon(50% 0%, 85% 15%, 100% 45%, 85% 75%, 50% 100%, 15% 75%, 0% 45%, 15% 15%);
             box-shadow: 
-                inset 0 0 8px rgba(100,160,140,0.3),
-                inset -3px -3px 10px rgba(0,60,60,0.2);
+                inset 0 0 10px rgba(0,0,0,0.4),
+                inset -2px -2px 8px rgba(0,30,30,0.2);
         }
         
         /* Brighter shine line - oculto por ahora */
@@ -451,15 +458,15 @@
         
         @keyframes gemEntrance {
             0% { 
-                transform: translate(-50%, -50%) scale(0) rotate(-180deg); 
+                transform: translate(-50%, -50%) scale(0) rotate(-90deg); 
                 opacity: 0;
             }
             60% { 
-                transform: translate(-50%, -50%) scale(1.2) rotate(10deg); 
+                transform: translate(-50%, -50%) scale(1.15) rotate(5deg); 
                 opacity: 1;
             }
             80% { 
-                transform: translate(-50%, -50%) scale(0.9) rotate(-5deg); 
+                transform: translate(-50%, -50%) scale(0.95) rotate(-2deg); 
             }
             100% { 
                 transform: translate(-50%, -50%) scale(1) rotate(0deg); 
@@ -472,22 +479,22 @@
                 opacity: 0;
             }
             50% { 
-                transform: translate(-50%, -50%) scale(1.5); 
-                opacity: 0.5;
+                transform: translate(-50%, -50%) scale(1.4); 
+                opacity: 0.6;
             }
             100% { 
                 transform: translate(-50%, -50%) scale(1); 
-                opacity: 0.9;
+                opacity: 1;
             }
         }
         
         @keyframes gemInnerEntrance {
             0% { 
-                transform: translateX(-50%) scale(0); 
+                transform: translate(-50%, -50%) scale(0); 
                 opacity: 0;
             }
             100% { 
-                transform: translateX(-50%) scale(1); 
+                transform: translate(-50%, -50%) scale(1); 
                 opacity: 1;
             }
         }
@@ -530,41 +537,6 @@
             opacity: 0.9;
             transition: all 0.4s;
             z-index: -1;
-        }
-        
-        .gem-main {
-            position: absolute;
-            top: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 160px;
-            height: 220px;
-            background: linear-gradient(
-                135deg,
-                rgba(255,255,255,0.95) 0%,
-                rgba(0,204,255,0.9) 20%,
-                rgba(0,136,170,0.95) 50%,
-                rgba(0,102,136,0.9) 80%,
-                rgba(0,68,102,0.85) 100%
-            );
-            clip-path: polygon(
-                50% 0%,
-                85% 15%,
-                100% 40%,
-                95% 70%,
-                80% 100%,
-                50% 95%,
-                20% 100%,
-                5% 70%,
-                0% 40%,
-                15% 15%
-            );
-            box-shadow:
-                0 0 30px rgba(0,204,255,0.5),
-                inset 5px 5px 20px rgba(255,255,255,0.5),
-                inset -5px -5px 20px rgba(0,0,0,0.3),
-                inset 0 0 40px rgba(255,255,255,0.2);
-            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
         
         .gem-shine {
@@ -611,11 +583,11 @@
         /* Crack overlay */
         .crack-overlay {
             position: absolute;
-            top: 10px;
+            top: 50%;
             left: 50%;
-            transform: translateX(-50%);
-            width: 160px;
-            height: 220px;
+            transform: translate(-50%, -50%);
+            width: 150px;
+            height: 170px;
             pointer-events: none;
             z-index: 10;
         }
@@ -647,24 +619,22 @@
         }
         
         .gem-container.tap .gem-main {
-            animation: gemTapHit 0.1s ease-out;
+            animation: gemTapHit 0.15s ease-out forwards;
         }
         
         @keyframes gemTapHit {
-            0% { transform: translate(-50%, 0) rotate(0deg); }
-            25% { transform: translate(-50%, 0) rotate(-15deg); }
-            50% { transform: translate(-50%, 0) rotate(15deg); }
-            75% { transform: translate(-50%, 0) rotate(-5deg); }
-            100% { transform: translate(-50%, 0) rotate(0deg); }
+            0% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(0.92) rotate(-8deg); }
+            100% { transform: translate(-50%, -50%) scale(1) rotate(0deg); }
         }
         
         .gem-container.tap .gem-glow {
-            animation: gemGlowTap 0.1s ease-out;
+            animation: gemGlowTap 0.15s ease-out forwards;
         }
         
         @keyframes gemGlowTap {
             0% { transform: translate(-50%, -50%) scale(1); }
-            50% { transform: translate(-50%, -50%) scale(1.5); }
+            50% { transform: translate(-50%, -50%) scale(0.85); }
             100% { transform: translate(-50%, -50%) scale(1); }
         }
         
@@ -721,49 +691,58 @@
         }
         
         .gem-container.shake .gem-main {
-            animation: gemShake 0.3s ease-in-out;
+            animation: gemShake 0.3s ease-in-out forwards;
         }
         
         @keyframes gemShake {
-            0%, 100% { transform: translate(-50%, 0) rotate(0deg); }
-            20% { transform: translate(-50%, -2px) rotate(-2deg); }
-            40% { transform: translate(-50%, 2px) rotate(1deg); }
-            60% { transform: translate(-50%, -1px) rotate(-1deg); }
-            80% { transform: translate(-50%, 1px) rotate(1deg); }
+            0%, 100% { transform: translate(-50%, -50%) rotate(0deg); }
+            20% { transform: translate(-50%, -50%) rotate(-3deg); }
+            40% { transform: translate(-50%, -50%) rotate(3deg); }
+            60% { transform: translate(-50%, -50%) rotate(-2deg); }
+            80% { transform: translate(-50%, -50%) rotate(2deg); }
         }
         
         .gem-container.vibrate .gem-main {
-            animation: gemVibrate 0.06s linear infinite;
+            animation: gemVibrate 0.08s linear infinite;
+            transform: translate(-50%, -50%);
         }
         
         @keyframes gemVibrate {
-            0%, 100% { transform: translate(-50%, -1px); }
-            50% { transform: translate(-50%, 1px); }
+            0%, 100% { transform: translate(-50%, -50%) translateY(-2px); }
+            50% { transform: translate(-50%, -50%) translateY(2px); }
         }
         
         .gem-container.legendary .gem-main {
-            animation: gemLegendary 0.3s ease-in-out infinite;
+            animation: gemLegendary 0.4s ease-in-out infinite;
+            transform: translate(-50%, -50%);
         }
         
         @keyframes gemLegendary {
-            0%, 100% { transform: translate(-50%, 0) scale(1) rotate(0deg); filter: brightness(1); }
-            25% { transform: translate(-50%, -1px) scale(1.03) rotate(1deg); filter: brightness(1.2); }
-            50% { transform: translate(-50%, 0) scale(1.05) rotate(0deg); filter: brightness(1.3); }
-            75% { transform: translate(-50%, 1px) scale(1.03) rotate(-1deg); filter: brightness(1.2); }
+            0%, 100% { transform: translate(-50%, -50%) scale(1) rotate(0deg); }
+            25% { transform: translate(-50%, -50%) scale(1.05) rotate(3deg); }
+            50% { transform: translate(-50%, -50%) scale(1.08) rotate(0deg); }
+            75% { transform: translate(-50%, -50%) scale(1.05) rotate(-3deg); }
         }
         
         .gem-container.breaking .gem-main {
-            animation: gemExplode 0.3s forwards;
+            animation: gemExplode 0.4s forwards;
+            transform: translate(-50%, -50%);
         }
         
         @keyframes gemExplode {
-            0% { transform: translateX(-50%) scale(1) rotate(0deg); opacity: 1; filter: brightness(1); }
-            50% { transform: translateX(-50%) scale(1.2) rotate(5deg); opacity: 0.8; filter: brightness(2); }
-            100% { transform: translateX(-50%) scale(0.8) rotate(15deg); opacity: 0; filter: brightness(3); }
+            0% { transform: translate(-50%, -50%) scale(1) rotate(0deg); opacity: 1; }
+            30% { transform: translate(-50%, -50%) scale(1.15) rotate(-3deg); opacity: 0.9; }
+            60% { transform: translate(-50%, -50%) scale(0.9) rotate(5deg); opacity: 0.6; }
+            100% { transform: translate(-50%, -50%) scale(0) rotate(10deg); opacity: 0; }
         }
         
         .gem-container.breaking .gem-inner {
-            animation: gemInnerExplode 0.3s forwards;
+            animation: gemInnerExplode 0.4s forwards;
+        }
+        
+        @keyframes gemInnerExplode {
+            0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
         }
         
         @keyframes gemInnerExplode {
@@ -867,30 +846,42 @@
         }
         
         #rarity-name {
-            font-size: 36px;
+            position: absolute;
+            bottom: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 28px;
             font-weight: bold;
             text-transform: uppercase;
-            letter-spacing: 4px;
-            text-shadow: 0 0 30px currentColor;
+            letter-spacing: 3px;
+            text-shadow: 0 0 20px currentColor, 2px 2px 4px rgba(0,0,0,0.8);
             transition: all 0.4s;
+            white-space: nowrap;
         }
         
         #rarity-percent {
-            font-size: 16px;
-            opacity: 0.8;
-            margin-top: 5px;
+            position: absolute;
+            bottom: 35px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 14px;
+            opacity: 0.9;
+            white-space: nowrap;
+            color: #fff;
         }
         
         #tap-display {
             position: absolute;
-            bottom: 120px;
+            top: 50%;
             left: 50%;
-            transform: translateX(-50%);
+            transform: translate(-50%, -50%);
             color: #fff;
-            font-size: 24px;
+            font-size: 20px;
             font-weight: bold;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
-            z-index: 5;
+            text-shadow: 0 0 10px rgba(0,0,0,0.8);
+            pointer-events: none;
+            text-align: center;
+            width: 200px;
         }
         
         /* Star Reward Modal */
@@ -3251,26 +3242,12 @@
             <div class="gem-glow" id="gem-glow"></div>
             <div class="gem-main" id="gem-main">
                 <div class="gem-inner"></div>
-                <div class="gem-shine"></div>
-                <div class="gem-facet"></div>
             </div>
-            <div class="crack-overlay" id="crack-overlay" style="transform: translateX(-50%);">
-                <svg viewBox="0 0 180 200" xmlns="http://www.w3.org/2000/svg" id="crack-svg">
-                    <defs>
-                        <linearGradient id="crackGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" style="stop-color:rgba(0,0,0,0.8)"/>
-                            <stop offset="100%" style="stop-color:rgba(50,50,50,0.6)"/>
-                        </linearGradient>
-                    </defs>
-                </svg>
-            </div>
+            <div class="crack-overlay" id="crack-overlay"></div>
+            <div id="tap-display">Toca 4 veces</div>
+            <div id="rarity-name"></div>
+            <div id="rarity-percent"></div>
         </div>
-        
-<div id="tap-display">Toca 4 veces</div>
-        
-        <!-- Elementos de rareza -->
-        <div id="rarity-name"></div>
-        <div id="rarity-percent"></div>
     </div>
     
     <!-- Menú SHOP -->
