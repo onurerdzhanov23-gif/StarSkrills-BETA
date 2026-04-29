@@ -378,8 +378,8 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 150px;
-            height: 150px;
+            width: 220px;
+            height: 220px;
             z-index: 10;
             cursor: pointer;
             text-align: center;
@@ -388,13 +388,31 @@
         .gem-container img {
             width: 100%;
             height: auto;
-            filter: drop-shadow(0 0 20px rgba(46,204,113,0.5));
+            filter: drop-shadow(0 0 30px rgba(46,204,113,0.6));
             transition: transform 0.1s ease;
+            animation: gemFloat 2s ease-in-out infinite;
+        }
+        
+        @keyframes gemFloat {
+            0%, 100% { transform: translate(-50%, -50%) translateY(0); }
+            50% { transform: translate(-50%, -50%) translateY(-10px); }
         }
         
         /* Tap animation */
         .gem-container.tap img {
-            transform: translate(-50%, -50%) scale(0.9);
+            animation: none;
+            transform: translate(-50%, -50%) scale(0.85);
+            filter: drop-shadow(0 0 50px rgba(46,204,113,0.9));
+        }
+        
+        .gem-container.breaking img {
+            animation: gemShatter 0.4s forwards;
+        }
+        
+        @keyframes gemShatter {
+            0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            50% { transform: translate(-50%, -50%) scale(1.2) rotate(10deg); opacity: 0.8; }
+            100% { transform: translate(-50%, -50%) scale(0) rotate(30deg); opacity: 0; }
         }
         
         /* Tap display */
@@ -404,10 +422,10 @@
             left: 50%;
             transform: translate(-50%, -50%);
             color: #fff;
-            font-size: 20px;
+            font-size: 24px;
             font-weight: bold;
             text-shadow: 2px 2px 4px #000;
-            margin-top: 80px;
+            margin-top: 150px;
         }
         
         /* Rarity text */
@@ -416,12 +434,12 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            font-size: 28px;
+            font-size: 32px;
             font-weight: bold;
             color: #FFD700;
             text-transform: uppercase;
             text-shadow: 2px 2px 4px #000;
-            margin-top: 130px;
+            margin-top: 220px;
             white-space: nowrap;
         }
         
@@ -430,9 +448,9 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            font-size: 16px;
+            font-size: 18px;
             color: #ccc;
-            margin-top: 160px;
+            margin-top: 260px;
         }
         
         .gem-main {
@@ -2876,7 +2894,7 @@
             <div id="spectating-name" style="color:#3498db;font-size:16px;margin-bottom:10px;"></div>
             <p style="font-size:12px;color:#888;margin:0;">Presiona ESC para salir</p>
         </div>
-        <button id="star-drop-btn" onclick="document.getElementById('star-drop-menu').style.display='flex';document.getElementById('star-drop-menu').classList.add('active')" style="padding:25px 70px;font-size:28px;font-family:'Poppins',sans-serif;font-weight:700;background:linear-gradient(180deg,#f1c40f,#f39c12);border:5px solid #fff;border-radius:25px;color:#000;cursor:pointer;margin:12px;box-shadow:0 8px 0 #d68910;text-transform:uppercase;letter-spacing:1px;">⭐ STAR DROP</button>
+        <button id="star-drop-btn" onclick="document.getElementById('start-menu').style.display='none';document.getElementById('star-drop-menu').style.display='flex';document.getElementById('star-drop-menu').classList.add('active')" style="padding:25px 70px;font-size:28px;font-family:'Poppins',sans-serif;font-weight:700;background:linear-gradient(180deg,#f1c40f,#f39c12);border:5px solid #fff;border-radius:25px;color:#000;cursor:pointer;margin:12px;box-shadow:0 8px 0 #d68910;text-transform:uppercase;letter-spacing:1px;">⭐ STAR DROP</button>
         <!-- Star pieces encima del botón JUGAR -->
         <div id="star-pieces-container" style="display:flex;gap:12px;margin-bottom:15px;">
             <div style="width:50px;height:50px;background:rgba(255,255,255,0.2);border:3px solid rgba(255,255,255,0.4);border-radius:12px;display:flex;align-items:center;justify-content:center;">
@@ -3312,8 +3330,8 @@
         <div id="star-drop-bg" class="star-drop-bg"></div>
         <button id="star-drop-close" onclick="document.getElementById('star-drop-menu').classList.remove('active');document.getElementById('star-drop-menu').style.display='none'" style="position:absolute;top:20px;right:20px;padding:10px 20px;background:#e74c3c;border:3px solid #fff;border-radius:10px;color:#fff;font-weight:bold;cursor:pointer;z-index:20;">X</button>
         
-        <div class="gem-container" id="gem-container">
-            <img src="Gemini_Generated_Image_15hlxk15hlxk15hl-removebg-preview.png" style="width:150px;height:150px;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:10;">
+        <div class="gem-container" id="gem-container" onclick="var g=document.getElementById('gem-container');if(g){g.classList.add('tap');setTimeout(()=>g.classList.remove('tap'),150)}">
+            <img src="Gemini_Generated_Image_15hlxk15hlxk15hl-removebg-preview.png" style="width:100%;height:auto;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:10;">
             <div id="tap-display">Toca 4 veces</div>
             <div id="rarity-name"></div>
             <div id="rarity-percent"></div>

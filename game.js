@@ -6644,12 +6644,11 @@ if (window.menuBrawler) {
             
             // Impact animation
             gem.classList.add('tap');
-            const gemGlow = document.getElementById('gem-glow');
-            gemGlow.classList.add('tap');
+            gem.classList.remove('tap');
             setTimeout(() => {
-                gem.classList.remove('tap');
-                gemGlow.classList.remove('tap');
-            }, 150);
+                gem.classList.add('tap');
+                setTimeout(() => gem.classList.remove('tap'), 150);
+            }, 10);
             
             // Add crack based on tap count - add to container
             gem.classList.remove('crack-1', 'crack-2', 'crack-3', 'crack-4');
