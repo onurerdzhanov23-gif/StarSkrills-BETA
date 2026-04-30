@@ -373,16 +373,88 @@
             z-index: 10;
         }
         
-        .gem-container {
+.gem-container {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 280px;
-            height: 280px;
+            width: 400px;
+            height: 400px;
             z-index: 10;
             cursor: pointer;
             text-align: center;
+        }
+        
+        .gem-container img {
+            width: 100%;
+            height: auto;
+            max-width: 400px;
+            filter: drop-shadow(0 0 50px rgba(46,204,113,0.8));
+            transition: transform 0.1s ease;
+            animation: gemFloat 2.5s ease-in-out infinite;
+        }
+        
+        .gem-container img {
+            width: 100%;
+            height: auto;
+            filter: drop-shadow(0 0 40px rgba(46,204,113,0.7));
+            transition: transform 0.1s ease;
+            animation: gemFloat 2s ease-in-out infinite;
+        }
+        
+        @keyframes gemFloat {
+            0%, 100% { transform: translate(-50%, -50%) translateY(0); }
+            50% { transform: translate(-50%, -50%) translateY(-15px); }
+        }
+        
+        /* Tap animation - shake and scale */
+        .gem-container.breaking img {
+            animation: gemShatter 0.5s forwards;
+        }
+        
+        @keyframes gemShatter {
+            0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            30% { transform: translate(-50%, -50%) scale(1.2) rotate(15deg); opacity: 0.9; }
+            60% { transform: translate(-50%, -50%) scale(1.3) rotate(-10deg); opacity: 0.6; }
+            100% { transform: translate(-50%, -50%) scale(0) rotate(45deg); opacity: 0; }
+        }
+        
+        /* Tap display */
+        #tap-display {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #fff;
+            font-size: 34px;
+            font-weight: bold;
+            text-shadow: 3px 3px 6px #000;
+            margin-top: 220px;
+        }
+        
+        /* Rarity text */
+        #rarity-name {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 42px;
+            font-weight: bold;
+            color: #FFD700;
+            text-transform: uppercase;
+            text-shadow: 3px 3px 6px #000;
+            margin-top: 320px;
+            white-space: nowrap;
+        }
+        
+        #rarity-percent {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 24px;
+            color: #ccc;
+            margin- top: 380px;
         }
         
         .gem-container img {
@@ -3344,7 +3416,7 @@
         <button id="star-drop-close" onclick="document.getElementById('star-drop-menu').classList.remove('active');document.getElementById('star-drop-menu').style.display='none';document.getElementById('start-menu').style.display='flex'" style="position:absolute;top:20px;right:20px;padding:10px 20px;background:#e74c3c;border:3px solid #fff;border-radius:10px;color:#fff;font-weight:bold;cursor:pointer;z-index:20;">X</button>
         
         <div class="gem-container" id="gem-container" onclick="var g=this;var t=document.getElementById('tap-display');var n=t.textContent;var c=parseInt(n);if(isNaN(c)||c<=0){c=4;t.textContent='3 veces ms'}else{t.textContent=(c-1)+' veces ms'};if(c<=1){g.classList.add('breaking');setTimeout(function(){document.getElementById('star-drop-menu').classList.remove('active');document.getElementById('star-drop-menu').style.display='none';document.getElementById('start-menu').style.display='flex';t.textContent='Toca 4 veces';g.classList.remove('breaking')},500)}else{g.classList.add('tap');setTimeout(function(){g.classList.remove('tap')},200)}">
-            <img src="Gemini_Generated_Image_15hlxk15hlxk15hl-removebg-preview.png" style="width:100%;height:auto;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:10;">
+            <img src="Gemini_Generated_Image_15hlxk15hlxk15hl-removebg-preview.png" style="width:100%;height:auto;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:10;max-width:350px;">
             <div id="tap-display">Toca 4 veces</div>
             <div id="rarity-name"></div>
             <div id="rarity-percent"></div>
