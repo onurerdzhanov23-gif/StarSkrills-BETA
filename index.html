@@ -378,8 +378,8 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 1500px;
-            height: 1500px;
+            width: 1000px;
+            height: 1000px;
             z-index: 10;
             cursor: pointer;
             text-align: center;
@@ -3425,7 +3425,7 @@
         <button id="star-drop-close" onclick="document.getElementById('star-drop-menu').classList.remove('active');document.getElementById('star-drop-menu').style.display='none';document.getElementById('start-menu').style.display='flex'" style="position:absolute;top:20px;right:20px;padding:10px 20px;background:#e74c3c;border:3px solid #fff;border-radius:10px;color:#fff;font-weight:bold;cursor:pointer;z-index:20;">X</button>
         
         <div class="gem-container" id="gem-container" onclick="var g=this;var t=document.getElementById('tap-display');var n=t.textContent;var c=parseInt(n);if(isNaN(c)||c<=0){c=4;t.textContent='3 veces ms'}else{t.textContent=(c-1)+' veces ms'};if(c<=1){g.classList.add('breaking');setTimeout(function(){document.getElementById('star-drop-menu').classList.remove('active');document.getElementById('star-drop-menu').style.display='none';document.getElementById('start-menu').style.display='flex';t.textContent='Toca 4 veces';g.classList.remove('breaking')},500)}else{g.classList.add('tap');setTimeout(function(){g.classList.remove('tap')},200)}">
-            <img src="Gemini_Generated_Image_15hlxk15hlxk15hl-removebg-preview.png" style="width:100%;height:auto;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:10;max-width:350px;">
+            <img src="Gemini_Generated_Image_15hlxk15hlxk15hl-removebg-preview.png" style="width:100%;height:auto;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:10;max-width:1000px;">
             <div id="tap-display">Toca 4 veces</div>
             <div id="rarity-name"></div>
             <div id="rarity-percent"></div>
