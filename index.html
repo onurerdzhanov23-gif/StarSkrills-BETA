@@ -499,6 +499,17 @@
             animation: gemTap 0.2s ease-out;
         }
         
+        /* Crack effects */
+        .gem-container.crack-1::after { content: ''; position: absolute; top: 30%; left: 40%; width: 20%; height: 2px; background: #fff; transform: rotate(30deg); opacity: 0.6; }
+        .gem-container.crack-2::after { content: ''; position: absolute; top: 25%; left: 35%; width: 40%; height: 2px; background: #fff; transform: rotate(25deg); opacity: 0.7; box-shadow: 0 0 10px #fff; }
+        .gem-container.crack-3::after { content: ''; position: absolute; top: 20%; left: 30%; width: 50%; height: 3px; background: #fff; transform: rotate(20deg); opacity: 0.8; box-shadow: 0 0 15px #fff, 0 0 30px cyan; }
+        .gem-container.crack-4::after { content: ''; position: absolute; top: 15%; left: 25%; width: 60%; height: 4px; background: #fff; transform: rotate(15deg); opacity: 0.9; box-shadow: 0 0 20px #fff, 0 0 40px cyan, 0 0 60px #00ffff; animation: crackGlow 0.1s infinite alternate; }
+        
+        @keyframes crackGlow {
+            0% { filter: brightness(1); }
+            100% { filter: brightness(1.5); }
+        }
+        
         .gem-container.breaking img {
             animation: gemShatter 0.4s forwards;
         }
@@ -3424,7 +3435,7 @@ max-width: 600px;
         <div id="star-drop-bg" class="star-drop-bg"></div>
         <button id="star-drop-close" onclick="document.getElementById('star-drop-menu').classList.remove('active');document.getElementById('star-drop-menu').style.display='none';document.getElementById('start-menu').style.display='flex'" style="position:absolute;top:20px;right:20px;padding:10px 20px;background:#e74c3c;border:3px solid #fff;border-radius:10px;color:#fff;font-weight:bold;cursor:pointer;z-index:20;">X</button>
         
-        <div class="gem-container" id="gem-container" onclick="var g=this;var t=document.getElementById('tap-display');var n=t.textContent;var c=parseInt(n);if(isNaN(c)||c<=0){c=4;t.textContent='3 veces ms'}else{t.textContent=(c-1)+' veces ms'};if(c<=1){g.classList.add('breaking');setTimeout(function(){document.getElementById('star-drop-menu').classList.remove('active');document.getElementById('star-drop-menu').style.display='none';document.getElementById('start-menu').style.display='flex';t.textContent='Toca 4 veces';g.classList.remove('breaking')},500)}else{g.classList.add('tap');setTimeout(function(){g.classList.remove('tap')},200)}">
+        <div class="gem-container" id="gem-container" onclick="var g=this,t=document.getElementById('tap-display'),n=t.textContent,c=/\d+/.test(n)?parseInt(n.match(/\d+/)[0]):4;if(c>0){c--;t.textContent=c>0?c+' veces ms':'¡EXPLOTA!';if(!window.crackSound){window.crackSound=function(){var a=new(window.AudioContext||window.webkitAudioContext),o=a.createOscillator(),ga=a.createGain();o.type='triangle';o.frequency.setValueAtTime(800,a.currentTime);o.frequency.exponentialRampToValueAtTime(100,a.currentTime+0.15);ga.gain.setValueAtTime(0.3,a.currentTime);ga.gain.exponentialRampToValueAtTime(0.01,a.currentTime+0.15);o.connect(ga);ga.connect(a.destination);o.start();o.stop(a.currentTime+0.15);};}window.crackSound();g.classList.remove('crack-1','crack-2','crack-3','crack-4');g.classList.add('tap','crack-'+(4-c));if(c<=0){g.classList.add('breaking');setTimeout(function(){document.getElementById('star-drop-menu').classList.remove('active');document.getElementById('star-drop-menu').style.display='none';document.getElementById('start-menu').style.display='flex';t.textContent='Toca 4 veces';g.classList.remove('breaking','crack-1','crack-2','crack-3','crack-4');g.classList.remove('tap');c=4;n.textContent='Toca 4 veces'},500)}else{setTimeout(function(){g.classList.remove('tap')},200)}}">
             <img src="Gemini_Generated_Image_15hlxk15hlxk15hl-removebg-preview.png" style="width:100%;height:auto;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:10;max-width:1000px;">
             <div id="tap-display">Toca 4 veces</div>
             <div id="rarity-name"></div>
